@@ -23,16 +23,16 @@
             <div class="relative text-left px-2 py-6 sm:px-4 sm:py-8 lg:px-6 lg:py-10">
                 <h1 class="relative z-10 font-display max-w-2xl lg:max-w-none">
                     <span class="hero-line hero-line-1 hero-headline-row block text-3xl sm:text-4xl md:text-4xl lg:text-[2.35rem] xl:text-5xl 2xl:text-6xl font-extrabold leading-[1.15] tracking-tight text-white">
-                        From Curiosity to Mastery,
+                        Learn With Purpose,
                     </span>
                     <span class="hero-line hero-line-2 hero-headline-row block mt-1 sm:mt-2 text-3xl sm:text-4xl md:text-4xl lg:text-[2.35rem] xl:text-5xl 2xl:text-6xl font-extrabold leading-[1.15] tracking-tight text-white">
-                        Grow Through Every Lesson,
+                        Grow Your Potential,
                     </span>
                     <span class="hero-line hero-line-3 hero-headline-row block mt-1 sm:mt-2 text-3xl sm:text-4xl md:text-4xl lg:text-[2.35rem] xl:text-5xl 2xl:text-6xl font-extrabold leading-[1.15] tracking-tight text-white">
-                        Build Skills That Matter,
+                        Create Real Impact,
                     </span>
                     <span class="hero-line hero-line-4 hero-headline-row block mt-1 sm:mt-2 text-3xl sm:text-4xl md:text-4xl lg:text-[2.35rem] xl:text-5xl 2xl:text-6xl font-extrabold leading-[1.15] tracking-tight text-white">
-                        And Shape Your <span class="hero-scratch-word relative inline-block text-brand">Future.<svg class="hero-scratch-svg absolute left-0 w-full pointer-events-none" viewBox="0 0 220 14" fill="none" preserveAspectRatio="none" aria-hidden="true"><path class="hero-scratch-path" d="M2 10 C40 2, 80 12, 120 4 S200 10, 218 6" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg></span>
+                        Shape Your <span class="hero-scratch-word relative inline-block text-brand">Future.<svg class="hero-scratch-svg absolute left-0 w-full pointer-events-none" viewBox="0 0 220 14" fill="none" preserveAspectRatio="none" aria-hidden="true"><path class="hero-scratch-path" d="M2 10 C40 2, 80 12, 120 4 S200 10, 218 6" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg></span>
                     </span>
                 </h1>
             </div>
