@@ -270,18 +270,31 @@ function initCoursesCatalog() {
     const cards = Array.from(catalog.querySelectorAll('.course-card'));
     const perPage = parseInt(catalog.dataset.perPage, 10) || 6;
     const absolutePriceMin = 0;
-    const defaultPriceMin = parseInt(catalog.dataset.priceMin, 10) || absolutePriceMin;
+    const defaultPriceMin = absolutePriceMin;
     const defaultPriceMax = parseInt(catalog.dataset.priceMax, 10) || 999;
+    const sliderRangeMax = defaultPriceMax;
 
     let currentPage = 1;
     let filteredCards = [...cards];
     let searchDebounceTimer = null;
     let priceDebounceTimer = null;
 
-    const clampPrice = (value, fallback) => {
+    const clampMinPrice = (value, fallback) => {
         const num = parseInt(value, 10);
         if (Number.isNaN(num)) return fallback;
-        return Math.min(defaultPriceMax, Math.max(absolutePriceMin, num));
+        return Math.max(absolutePriceMin, num);
+    };
+
+    const clampMaxPrice = (value, fallback) => {
+        const num = parseInt(value, 10);
+        if (Number.isNaN(num)) return fallback;
+        return Math.max(absolutePriceMin, num);
+    };
+
+    const clampSliderValue = (value, fallback) => {
+        const num = parseInt(value, 10);
+        if (Number.isNaN(num)) return fallback;
+        return Math.min(sliderRangeMax, Math.max(absolutePriceMin, num));
     };
 
     const parsePriceInput = (value) => {
@@ -294,17 +307,35 @@ function initCoursesCatalog() {
     const getEffectivePrices = () => {
         const minFromNum = parsePriceInput(priceMinNum.value);
         const maxFromNum = parsePriceInput(priceMaxNum.value);
-        const minPrice = minFromNum !== null ? clampPrice(minFromNum, defaultPriceMin) : parseInt(priceMinInput.value, 10);
-        const maxPrice = maxFromNum !== null ? clampPrice(maxFromNum, defaultPriceMax) : parseInt(priceMaxInput.value, 10);
+        const minPrice = minFromNum !== null
+            ? clampMinPrice(minFromNum, defaultPriceMin)
+            : clampSliderValue(priceMinInput.value, defaultPriceMin);
+        const maxPrice = maxFromNum !== null
+            ? clampMaxPrice(maxFromNum, defaultPriceMax)
+            : clampSliderValue(priceMaxInput.value, defaultPriceMax);
+
         return {
             minPrice: Math.min(minPrice, maxPrice),
             maxPrice: Math.max(minPrice, maxPrice),
         };
     };
 
+    const updateRangeFill = (minVal, maxVal) => {
+        const range = sliderRangeMax - absolutePriceMin || 1;
+        const sliderMin = clampSliderValue(minVal, defaultPriceMin);
+        const visualMax = Math.min(maxVal, sliderRangeMax);
+        const left = ((sliderMin - absolutePriceMin) / range) * 100;
+        const width = maxVal > sliderRangeMax
+            ? 100 - left
+            : ((visualMax - sliderMin) / range) * 100;
+
+        priceRangeFill.style.left = `${left}%`;
+        priceRangeFill.style.width = `${Math.max(0, width)}%`;
+    };
+
     const syncPriceValues = (source, { clampInputs = true } = {}) => {
-        let minVal = parseInt(priceMinInput.value, 10);
-        let maxVal = parseInt(priceMaxInput.value, 10);
+        let minVal = clampSliderValue(priceMinInput.value, defaultPriceMin);
+        let maxVal = clampMaxPrice(priceMaxNum.value, defaultPriceMax);
 
         if (source === 'min-num') {
             const parsed = parsePriceInput(priceMinNum.value);
@@ -312,24 +343,35 @@ function initCoursesCatalog() {
                 if (!clampInputs) return;
                 minVal = defaultPriceMin;
             } else {
-                minVal = clampInputs ? clampPrice(parsed, defaultPriceMin) : parsed;
+                minVal = clampInputs ? clampMinPrice(parsed, defaultPriceMin) : parsed;
             }
+            maxVal = clampMaxPrice(priceMaxNum.value, defaultPriceMax);
         }
+
         if (source === 'max-num') {
             const parsed = parsePriceInput(priceMaxNum.value);
             if (parsed === null) {
                 if (!clampInputs) return;
                 maxVal = defaultPriceMax;
             } else {
-                maxVal = clampInputs ? clampPrice(parsed, defaultPriceMax) : parsed;
+                maxVal = clampInputs ? clampMaxPrice(parsed, defaultPriceMax) : parsed;
             }
+            minVal = clampMinPrice(priceMinNum.value, defaultPriceMin);
         }
-        if (source === 'min-range') minVal = clampPrice(priceMinInput.value, defaultPriceMin);
-        if (source === 'max-range') maxVal = clampPrice(priceMaxInput.value, defaultPriceMax);
+
+        if (source === 'min-range') {
+            minVal = clampSliderValue(priceMinInput.value, defaultPriceMin);
+            maxVal = clampMaxPrice(priceMaxNum.value, defaultPriceMax);
+        }
+
+        if (source === 'max-range') {
+            maxVal = clampSliderValue(priceMaxInput.value, defaultPriceMax);
+            minVal = clampMinPrice(priceMinNum.value, defaultPriceMin);
+        }
 
         if (clampInputs) {
-            minVal = clampPrice(minVal, defaultPriceMin);
-            maxVal = clampPrice(maxVal, defaultPriceMax);
+            minVal = clampMinPrice(minVal, defaultPriceMin);
+            maxVal = clampMaxPrice(maxVal, defaultPriceMax);
         }
 
         if (minVal > maxVal) {
@@ -340,22 +382,15 @@ function initCoursesCatalog() {
             }
         }
 
-        priceMinInput.value = clampPrice(minVal, defaultPriceMin);
-        priceMaxInput.value = clampPrice(maxVal, defaultPriceMax);
+        priceMinInput.value = clampSliderValue(minVal, defaultPriceMin);
+        priceMaxInput.value = clampSliderValue(maxVal, defaultPriceMax);
 
         if (clampInputs || source.includes('range')) {
-            priceMinNum.value = priceMinInput.value;
-            priceMaxNum.value = priceMaxInput.value;
+            priceMinNum.value = minVal;
+            priceMaxNum.value = maxVal;
         }
 
-        const range = defaultPriceMax - absolutePriceMin || 1;
-        const sliderMin = parseInt(priceMinInput.value, 10);
-        const sliderMax = parseInt(priceMaxInput.value, 10);
-        const left = ((sliderMin - absolutePriceMin) / range) * 100;
-        const width = ((sliderMax - sliderMin) / range) * 100;
-
-        priceRangeFill.style.left = `${left}%`;
-        priceRangeFill.style.width = `${width}%`;
+        updateRangeFill(minVal, maxVal);
     };
 
     const updatePriceRangeUI = (source, options = {}) => {

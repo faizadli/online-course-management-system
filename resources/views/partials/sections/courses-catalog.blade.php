@@ -20,7 +20,7 @@ $priceMin = collect($courses)->min('priceValue');
 $priceMax = collect($courses)->max('priceValue');
 @endphp
 
-<section id="courses-catalog" class="pb-20 lg:pb-28 bg-white" data-per-page="6" data-price-min="{{ $priceMin }}" data-price-max="{{ $priceMax }}">
+<section id="courses-catalog" class="pb-20 lg:pb-28 bg-white" data-per-page="6" data-price-min="0" data-price-max="{{ $priceMax }}">
     <div class="page-container">
         {{-- Search & filters --}}
         <div class="catalog-filters relative z-40 mb-8 sm:mb-10">
@@ -82,8 +82,7 @@ $priceMax = collect($courses)->max('priceValue');
                             type="number"
                             id="price-min-num"
                             min="0"
-                            max="{{ $priceMax }}"
-                            value="{{ $priceMin }}"
+                            value="0"
                             class="price-num-input w-12 sm:w-14"
                             aria-label="Minimum price"
                         >
@@ -91,7 +90,7 @@ $priceMax = collect($courses)->max('priceValue');
                     <div class="price-range-slider relative flex-1 h-6 min-w-[4.5rem]" id="course-price-range">
                         <div class="price-range-track absolute top-1/2 -translate-y-1/2 left-0 right-0 h-1 rounded-full bg-gray-200"></div>
                         <div id="price-range-fill" class="price-range-fill absolute top-1/2 -translate-y-1/2 h-1 rounded-full bg-brand"></div>
-                        <input type="range" id="price-min" min="0" max="{{ $priceMax }}" value="{{ $priceMin }}" class="price-range-input" aria-label="Minimum price slider">
+                        <input type="range" id="price-min" min="0" max="{{ $priceMax }}" value="0" class="price-range-input" aria-label="Minimum price slider">
                         <input type="range" id="price-max" min="0" max="{{ $priceMax }}" value="{{ $priceMax }}" class="price-range-input" aria-label="Maximum price slider">
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
@@ -100,9 +99,8 @@ $priceMax = collect($courses)->max('priceValue');
                             type="number"
                             id="price-max-num"
                             min="0"
-                            max="{{ $priceMax }}"
                             value="{{ $priceMax }}"
-                            class="price-num-input w-12 sm:w-14"
+                            class="price-num-input w-14 sm:w-16"
                             aria-label="Maximum price"
                         >
                     </div>
