@@ -25,3 +25,11 @@ Route::get('/cart', function () {
 Route::get('/checkout', function () {
     return view('landing.checkout');
 })->name('checkout');
+
+Route::get('/login', function () {
+    return view('landing.login');
+})->name('login');
+
+Route::get('/wishlist', function () {
+    return view('landing.wishlist');
+})->name('wishlist');
