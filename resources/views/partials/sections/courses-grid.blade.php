@@ -2,15 +2,15 @@
 @php
 $limit = $limit ?? null;
 $courses = [
-    ['title' => 'UI/UX Design Fundamentals', 'category' => 'Design & Creative', 'instructor' => 'Sarah Chen', 'price' => '$49', 'rating' => '4.9', 'badge' => 'Best Seller', 'badgeColor' => 'bg-red-500', 'image' => 'photo-1561070791-2526d30994b5'],
-    ['title' => 'Full Stack Web Development', 'category' => 'Tech & Programming', 'instructor' => 'John Doe', 'price' => '$79', 'rating' => '4.8', 'badge' => 'New', 'badgeColor' => 'bg-brand', 'image' => 'photo-1498050108023-c5249f4df085'],
-    ['title' => 'Digital Marketing Mastery', 'category' => 'Business & Marketing', 'instructor' => 'Emily Rose', 'price' => '$59', 'rating' => '4.7', 'badge' => 'Hot', 'badgeColor' => 'bg-orange-500', 'image' => 'photo-1460925895917-afdab827c52f'],
-    ['title' => 'Photography for Beginners', 'category' => 'Photography', 'instructor' => 'Alex Kim', 'price' => '$39', 'rating' => '4.9', 'badge' => null, 'badgeColor' => '', 'image' => 'photo-1452587925148-ce544e77e70d'],
-    ['title' => 'Python Data Science Bootcamp', 'category' => 'Tech & Programming', 'instructor' => 'Mike Johnson', 'price' => '$89', 'rating' => '4.8', 'badge' => 'Best Seller', 'badgeColor' => 'bg-red-500', 'image' => 'photo-1555949963-aa79d882981c'],
-    ['title' => 'Public Speaking Confidence', 'category' => 'Personal Development', 'instructor' => 'Lisa Park', 'price' => '$29', 'rating' => '4.6', 'badge' => 'New', 'badgeColor' => 'bg-brand', 'image' => 'photo-1475721027785-f74eccf877e2'],
-    ['title' => 'Graphic Design with Figma', 'category' => 'Design & Creative', 'instructor' => 'Tom Wilson', 'price' => '$54', 'rating' => '4.9', 'badge' => null, 'badgeColor' => '', 'image' => 'photo-1626785774573-4b799315345d'],
-    ['title' => 'Financial Literacy 101', 'category' => 'Business & Marketing', 'instructor' => 'Anna Lee', 'price' => '$34', 'rating' => '4.7', 'badge' => 'Hot', 'badgeColor' => 'bg-orange-500', 'image' => 'photo-1554224155-6726b3ff858f'],
-    ['title' => 'Mobile App Development', 'category' => 'Tech & Programming', 'instructor' => 'David Park', 'price' => '$99', 'rating' => '4.8', 'badge' => 'Best Seller', 'badgeColor' => 'bg-red-500', 'image' => 'photo-1512941937669-90a1b58e7e9c'],
+    ['slug' => 'ui-ux-design-fundamentals', 'title' => 'UI/UX Design Fundamentals', 'category' => 'Design & Creative', 'instructor' => 'Sarah Chen', 'price' => '$49', 'rating' => '4.9', 'badge' => 'Best Seller', 'badgeColor' => 'bg-red-500', 'image' => 'photo-1561070791-2526d30994b5'],
+    ['slug' => 'full-stack-web-development', 'title' => 'Full Stack Web Development', 'category' => 'Tech & Programming', 'instructor' => 'John Doe', 'price' => '$79', 'rating' => '4.8', 'badge' => 'New', 'badgeColor' => 'bg-brand', 'image' => 'photo-1498050108023-c5249f4df085'],
+    ['slug' => 'digital-marketing-mastery', 'title' => 'Digital Marketing Mastery', 'category' => 'Business & Marketing', 'instructor' => 'Emily Rose', 'price' => '$59', 'rating' => '4.7', 'badge' => 'Hot', 'badgeColor' => 'bg-orange-500', 'image' => 'photo-1460925895917-afdab827c52f'],
+    ['slug' => 'photography-for-beginners', 'title' => 'Photography for Beginners', 'category' => 'Photography', 'instructor' => 'Alex Kim', 'price' => '$39', 'rating' => '4.9', 'badge' => null, 'badgeColor' => '', 'image' => 'photo-1452587925148-ce544e77e70d'],
+    ['slug' => 'python-data-science-bootcamp', 'title' => 'Python Data Science Bootcamp', 'category' => 'Tech & Programming', 'instructor' => 'Mike Johnson', 'price' => '$89', 'rating' => '4.8', 'badge' => 'Best Seller', 'badgeColor' => 'bg-red-500', 'image' => 'photo-1555949963-aa79d882981c'],
+    ['slug' => 'public-speaking-confidence', 'title' => 'Public Speaking Confidence', 'category' => 'Personal Development', 'instructor' => 'Lisa Park', 'price' => '$29', 'rating' => '4.6', 'badge' => 'New', 'badgeColor' => 'bg-brand', 'image' => 'photo-1475721027785-f74eccf877e2'],
+    ['slug' => 'graphic-design-with-figma', 'title' => 'Graphic Design with Figma', 'category' => 'Design & Creative', 'instructor' => 'Tom Wilson', 'price' => '$54', 'rating' => '4.9', 'badge' => null, 'badgeColor' => '', 'image' => 'photo-1626785774573-4b799315345d'],
+    ['slug' => 'financial-literacy-101', 'title' => 'Financial Literacy 101', 'category' => 'Business & Marketing', 'instructor' => 'Anna Lee', 'price' => '$34', 'rating' => '4.7', 'badge' => 'Hot', 'badgeColor' => 'bg-orange-500', 'image' => 'photo-1554224155-6726b3ff858f'],
+    ['slug' => 'mobile-app-development', 'title' => 'Mobile App Development', 'category' => 'Tech & Programming', 'instructor' => 'David Park', 'price' => '$99', 'rating' => '4.8', 'badge' => 'Best Seller', 'badgeColor' => 'bg-red-500', 'image' => 'photo-1512941937669-90a1b58e7e9c'],
 ];
 if ($limit) {
     $courses = array_slice($courses, 0, $limit);
@@ -56,9 +56,9 @@ $sectionClass = $sectionClass ?? 'py-20 lg:py-28 bg-surface';
                     </div>
                     <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <span class="text-xl font-bold text-gray-900">{{ $course['price'] }}</span>
-                        <button class="w-full sm:w-auto px-4 py-2 text-sm font-semibold border border-gray-200 rounded-full hover:bg-brand hover:text-gray-800 hover:border-brand transition-all duration-300 text-center">
+                        <a href="{{ route('courses.show', $course['slug']) }}" class="btn-course-view w-full sm:w-auto px-4 py-2 text-sm font-semibold border border-gray-200 rounded-full transition-all duration-300 text-center">
                             View Course
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

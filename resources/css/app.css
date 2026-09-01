@@ -1208,3 +1208,38 @@ html {
         justify-content: space-between;
     }
 }
+
+/* ── Course buttons ── */
+.btn-course-view {
+    display: inline-block;
+    color: rgb(17 24 39);
+    background: white;
+}
+
+.btn-course-view:hover {
+    color: white;
+    background: var(--color-brand-dark);
+    border-color: var(--color-brand-dark);
+}
+
+.course-btn-secondary {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8125rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(55 65 81);
+    background: white;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 0.5rem;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.course-btn-secondary:hover {
+    color: var(--color-brand-dark);
+    border-color: var(--color-brand-dark);
+    background: var(--color-brand-light);
+}
