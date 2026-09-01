@@ -20,7 +20,7 @@ $priceMin = collect($courses)->min('priceValue');
 $priceMax = collect($courses)->max('priceValue');
 @endphp
 
-<section id="courses-catalog" class="pb-20 lg:pb-28 bg-surface" data-per-page="6" data-price-min="{{ $priceMin }}" data-price-max="{{ $priceMax }}">
+<section id="courses-catalog" class="pb-20 lg:pb-28 bg-white" data-per-page="6" data-price-min="{{ $priceMin }}" data-price-max="{{ $priceMax }}">
     <div class="page-container">
         {{-- Search & filters --}}
         <div class="reveal mb-8 sm:mb-10">

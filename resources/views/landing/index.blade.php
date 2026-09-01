@@ -15,7 +15,7 @@
                 <span>4.9 on Trustpilot</span>
             </div>
 
-            <h1 class="mt-6 max-w-2xl font-display text-[2.65rem] font-extrabold leading-[0.95] tracking-[-0.06em] text-gray-950 sm:text-5xl lg:text-[3.6rem] xl:text-[4.15rem]">
+            <h1 class="mt-6 max-w-2xl font-display text-[2.65rem] font-extrabold leading-[0.95] tracking-[-0.06em] text-gray-900 sm:text-5xl lg:text-[3.6rem] xl:text-[4.15rem]">
                 <span class="hero-line hero-line-2 block">Learn With Purpose,</span>
                 <span class="hero-line hero-line-3 block">Build Real Skills,</span>
                 <span class="hero-line hero-line-4 block">Shape Your <span class="hero-editorial-word">Future.</span></span>
@@ -25,22 +25,22 @@
                 Learn anywhere. Build skills that move you forward.
             </p>
 
-            <a href="#courses" class="hero-line hero-line-4 mt-7 inline-flex items-center gap-2 rounded-full bg-brand-dark px-5 py-3 text-sm font-semibold text-gray-950 shadow-lg shadow-brand-dark/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#5fc18f]">
+            <a href="#courses" class="hero-line hero-line-4 mt-7 inline-flex items-center gap-2 rounded-full bg-brand-dark px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-dark/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand">
                 Explore Courses
                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-6-6 6 6-6 6"/></svg>
             </a>
 
             <div class="hero-line hero-line-4 mt-10 flex items-center gap-7 border-t border-gray-900/10 pt-5 sm:gap-10">
                 <div>
-                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-950">100+</p>
+                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-900">100+</p>
                     <p class="mt-1 text-[0.65rem] uppercase tracking-wider text-gray-500">Expert courses</p>
                 </div>
                 <div>
-                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-950">12k+</p>
+                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-900">12k+</p>
                     <p class="mt-1 text-[0.65rem] uppercase tracking-wider text-gray-500">Active learners</p>
                 </div>
                 <div>
-                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-950">4.9</p>
+                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-900">4.9</p>
                     <p class="mt-1 text-[0.65rem] uppercase tracking-wider text-gray-500">Average rating</p>
                 </div>
             </div>
@@ -54,14 +54,14 @@
             </div>
 
             <div class="hero-float hero-float-delay-1 absolute right-0 top-10 flex items-center gap-2 rounded-full bg-white px-3 py-2 text-[0.7rem] font-semibold text-gray-800 shadow-lg">
-                <span class="flex h-5 w-5 items-center justify-center rounded-full bg-brand-dark text-gray-950">
+                <span class="flex h-5 w-5 items-center justify-center rounded-full bg-brand-dark text-white">
                     <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m5 12 4 4L19 6"/></svg>
                 </span>
                 Learn together
             </div>
 
             <div class="hero-float hero-float-delay-2 absolute right-2 top-24 flex items-center gap-2 rounded-full bg-white px-3 py-2 text-[0.7rem] font-semibold text-gray-800 shadow-lg">
-                <span class="flex h-5 w-5 items-center justify-center rounded-full bg-brand-dark text-gray-950">
+                <span class="flex h-5 w-5 items-center justify-center rounded-full bg-brand-dark text-white">
                     <svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="m5 12 4 4L19 6"/></svg>
                 </span>
                 Learn at your pace
@@ -76,20 +76,20 @@
                 </div>
             </div>
 
-            <div class="hero-float hero-float-left absolute bottom-12 left-0 rounded-2xl bg-brand-dark px-4 py-3 text-gray-950 shadow-xl">
+            <div class="hero-float hero-float-left absolute bottom-12 left-0 rounded-2xl bg-brand-dark px-4 py-3 text-white shadow-xl">
                 <p class="font-display text-2xl font-extrabold leading-none">50+</p>
-                <p class="mt-1 text-[0.65rem] font-semibold uppercase tracking-wider text-gray-700">Learning paths</p>
+                <p class="mt-1 text-[0.65rem] font-semibold uppercase tracking-wider text-white/80">Learning paths</p>
             </div>
 
-            <div class="hero-float hero-float-right hero-float-delay-1 absolute bottom-1/3 right-[-0.25rem] rounded-2xl bg-brand-dark px-4 py-3 text-gray-950 shadow-xl">
+            <div class="hero-float hero-float-right hero-float-delay-1 absolute bottom-1/3 right-[-0.25rem] rounded-2xl bg-brand-dark px-4 py-3 text-white shadow-xl">
                 <p class="font-display text-2xl font-extrabold leading-none">24/7</p>
-                <p class="mt-1 text-[0.65rem] font-semibold uppercase tracking-wider text-gray-700">Learn anywhere</p>
+                <p class="mt-1 text-[0.65rem] font-semibold uppercase tracking-wider text-white/80">Learn anywhere</p>
             </div>
         </div>
     </div>
 </section>
 
-@include('partials.sections.categories', ['bgClass' => 'bg-[#f3faf6]'])
+@include('partials.sections.categories', ['bgClass' => 'bg-brand-light'])
 @include('partials.sections.courses-grid')
 @include('partials.sections.testimonials')
 

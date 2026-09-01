@@ -1,4 +1,4 @@
-<div class="pt-24 lg:pt-28 pb-12 lg:pb-16 bg-surface">
+<div class="pt-24 lg:pt-28 pb-12 lg:pb-16 {{ $bgClass ?? 'bg-surface' }}">
     <div class="page-container">
         @if(!empty($eyebrow))
         <p class="text-sm font-semibold uppercase tracking-widest text-brand-dark mb-3 reveal">{{ $eyebrow }}</p>

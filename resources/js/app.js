@@ -73,7 +73,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Courses catalog — search, filters & pagination
     initCoursesCatalog();
+
+    // Checkout payment method accordion
+    initCheckoutPage();
 });
+
+function initCheckoutPage() {
+    const paymentMethods = document.getElementById('payment-methods');
+    if (!paymentMethods) return;
+
+    paymentMethods.addEventListener('click', (e) => {
+        const header = e.target.closest('.payment-method-header');
+        if (!header) return;
+
+        const method = header.closest('.payment-method');
+        paymentMethods.querySelectorAll('.payment-method').forEach((el) => {
+            el.classList.toggle('is-open', el === method);
+        });
+    });
+}
 
 function initCoursesCatalog() {
     const catalog = document.getElementById('courses-catalog');

@@ -17,3 +17,11 @@ Route::get('/about', function () {
 Route::get('/dashboard', function () {
     return view('dashboard.index');
 })->name('dashboard');
+
+Route::get('/cart', function () {
+    return view('landing.cart');
+})->name('cart');
+
+Route::get('/checkout', function () {
+    return view('landing.checkout');
+})->name('checkout');
