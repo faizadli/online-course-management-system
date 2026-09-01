@@ -76,6 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Checkout payment method accordion
     initCheckoutPage();
+
+    // Instructor courses search & pagination
+    initInstructorCourses();
 });
 
 function initCheckoutPage() {
@@ -91,6 +94,155 @@ function initCheckoutPage() {
             el.classList.toggle('is-open', el === method);
         });
     });
+}
+
+function initInstructorCourses() {
+    const section = document.getElementById('instructor-courses');
+    if (!section) return;
+
+    const searchInput = document.getElementById('instructor-course-search');
+    const grid = document.getElementById('instructor-courses-grid');
+    const emptyState = document.getElementById('instructor-courses-empty');
+    const pagination = document.getElementById('instructor-courses-pagination');
+    const resultCount = document.getElementById('instructor-courses-count');
+    const cards = Array.from(section.querySelectorAll('.instructor-course-card'));
+    const perPage = parseInt(section.dataset.perPage, 10) || 3;
+
+    let currentPage = 1;
+    let searchDebounceTimer = null;
+
+    const getFilteredCards = () => {
+        const query = searchInput.value.trim().toLowerCase();
+        if (!query) return [...cards];
+
+        return cards.filter((card) => {
+            const title = card.dataset.title || '';
+            const category = card.dataset.category || '';
+            return title.includes(query) || category.includes(query);
+        });
+    };
+
+    const getPageNumbers = (totalPages, current) => {
+        if (totalPages <= 7) {
+            return Array.from({ length: totalPages }, (_, i) => i + 1);
+        }
+
+        const pages = [1];
+        if (current > 3) pages.push('…');
+
+        const start = Math.max(2, current - 1);
+        const end = Math.min(totalPages - 1, current + 1);
+        for (let i = start; i <= end; i++) pages.push(i);
+
+        if (current < totalPages - 2) pages.push('…');
+        pages.push(totalPages);
+
+        return pages;
+    };
+
+    const renderPagination = (totalPages) => {
+        pagination.innerHTML = '';
+        if (totalPages <= 1) return;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'inline-flex items-center gap-5 sm:gap-6';
+
+        const goToPage = (page) => {
+            currentPage = page;
+            render();
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
+        const createNavBtn = (label, page, disabled, direction) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.disabled = disabled;
+            btn.setAttribute('aria-label', label);
+            btn.className = 'pagination-nav-btn';
+
+            if (direction === 'prev') {
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 19l-7-7 7-7"/></svg><span>Prev</span>';
+            } else {
+                btn.innerHTML = '<span>Next</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 5l7 7-7 7"/></svg>';
+            }
+
+            if (!disabled) {
+                btn.addEventListener('click', () => goToPage(page));
+            }
+
+            return btn;
+        };
+
+        wrapper.appendChild(createNavBtn('Previous page', currentPage - 1, currentPage === 1, 'prev'));
+
+        const pagesWrap = document.createElement('div');
+        pagesWrap.className = 'flex items-center gap-3 sm:gap-4';
+
+        getPageNumbers(totalPages, currentPage).forEach((item) => {
+            if (item === '…') {
+                const span = document.createElement('span');
+                span.textContent = '…';
+                span.className = 'text-sm text-gray-300 select-none';
+                pagesWrap.appendChild(span);
+                return;
+            }
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = String(item);
+            btn.className = `pagination-page-btn relative${item === currentPage ? ' is-active' : ''}`;
+            btn.addEventListener('click', () => goToPage(item));
+            pagesWrap.appendChild(btn);
+        });
+
+        wrapper.appendChild(pagesWrap);
+        wrapper.appendChild(createNavBtn('Next page', currentPage + 1, currentPage === totalPages, 'next'));
+        pagination.appendChild(wrapper);
+    };
+
+    const render = () => {
+        const filtered = getFilteredCards();
+        const total = filtered.length;
+        const totalPages = Math.max(1, Math.ceil(total / perPage));
+
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+        cards.forEach((card) => card.classList.add('hidden'));
+
+        if (total === 0) {
+            grid.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+            pagination.innerHTML = '';
+            resultCount.textContent = 'No courses found';
+            return;
+        }
+
+        grid.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+
+        const start = (currentPage - 1) * perPage;
+        filtered.slice(start, start + perPage).forEach((card) => card.classList.remove('hidden'));
+
+        const showingStart = start + 1;
+        const showingEnd = Math.min(start + perPage, total);
+        resultCount.textContent = searchInput.value.trim()
+            ? `Showing ${showingStart}–${showingEnd} of ${total} matching courses`
+            : `Showing ${showingStart}–${showingEnd} of ${total} courses`;
+
+        renderPagination(totalPages);
+    };
+
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+            currentPage = 1;
+            render();
+        }, 300);
+    });
+
+    render();
 }
 
 function initCoursesCatalog() {
@@ -117,7 +269,8 @@ function initCoursesCatalog() {
     const grid = document.getElementById('courses-grid');
     const cards = Array.from(catalog.querySelectorAll('.course-card'));
     const perPage = parseInt(catalog.dataset.perPage, 10) || 6;
-    const defaultPriceMin = parseInt(catalog.dataset.priceMin, 10) || 0;
+    const absolutePriceMin = 0;
+    const defaultPriceMin = parseInt(catalog.dataset.priceMin, 10) || absolutePriceMin;
     const defaultPriceMax = parseInt(catalog.dataset.priceMax, 10) || 999;
 
     let currentPage = 1;
@@ -128,17 +281,56 @@ function initCoursesCatalog() {
     const clampPrice = (value, fallback) => {
         const num = parseInt(value, 10);
         if (Number.isNaN(num)) return fallback;
-        return Math.min(defaultPriceMax, Math.max(defaultPriceMin, num));
+        return Math.min(defaultPriceMax, Math.max(absolutePriceMin, num));
     };
 
-    const syncPriceValues = (source) => {
-        let minVal = clampPrice(priceMinInput.value, defaultPriceMin);
-        let maxVal = clampPrice(priceMaxInput.value, defaultPriceMax);
+    const parsePriceInput = (value) => {
+        const trimmed = String(value).trim();
+        if (trimmed === '') return null;
+        const num = parseInt(trimmed, 10);
+        return Number.isNaN(num) ? null : num;
+    };
 
-        if (source === 'min-num') minVal = clampPrice(priceMinNum.value, defaultPriceMin);
-        if (source === 'max-num') maxVal = clampPrice(priceMaxNum.value, defaultPriceMax);
+    const getEffectivePrices = () => {
+        const minFromNum = parsePriceInput(priceMinNum.value);
+        const maxFromNum = parsePriceInput(priceMaxNum.value);
+        const minPrice = minFromNum !== null ? clampPrice(minFromNum, defaultPriceMin) : parseInt(priceMinInput.value, 10);
+        const maxPrice = maxFromNum !== null ? clampPrice(maxFromNum, defaultPriceMax) : parseInt(priceMaxInput.value, 10);
+        return {
+            minPrice: Math.min(minPrice, maxPrice),
+            maxPrice: Math.max(minPrice, maxPrice),
+        };
+    };
+
+    const syncPriceValues = (source, { clampInputs = true } = {}) => {
+        let minVal = parseInt(priceMinInput.value, 10);
+        let maxVal = parseInt(priceMaxInput.value, 10);
+
+        if (source === 'min-num') {
+            const parsed = parsePriceInput(priceMinNum.value);
+            if (parsed === null) {
+                if (!clampInputs) return;
+                minVal = defaultPriceMin;
+            } else {
+                minVal = clampInputs ? clampPrice(parsed, defaultPriceMin) : parsed;
+            }
+        }
+        if (source === 'max-num') {
+            const parsed = parsePriceInput(priceMaxNum.value);
+            if (parsed === null) {
+                if (!clampInputs) return;
+                maxVal = defaultPriceMax;
+            } else {
+                maxVal = clampInputs ? clampPrice(parsed, defaultPriceMax) : parsed;
+            }
+        }
         if (source === 'min-range') minVal = clampPrice(priceMinInput.value, defaultPriceMin);
         if (source === 'max-range') maxVal = clampPrice(priceMaxInput.value, defaultPriceMax);
+
+        if (clampInputs) {
+            minVal = clampPrice(minVal, defaultPriceMin);
+            maxVal = clampPrice(maxVal, defaultPriceMax);
+        }
 
         if (minVal > maxVal) {
             if (source === 'min-num' || source === 'min-range') {
@@ -148,28 +340,32 @@ function initCoursesCatalog() {
             }
         }
 
-        priceMinInput.value = minVal;
-        priceMaxInput.value = maxVal;
-        priceMinNum.value = minVal;
-        priceMaxNum.value = maxVal;
+        priceMinInput.value = clampPrice(minVal, defaultPriceMin);
+        priceMaxInput.value = clampPrice(maxVal, defaultPriceMax);
 
-        const range = defaultPriceMax - defaultPriceMin || 1;
-        const left = ((minVal - defaultPriceMin) / range) * 100;
-        const width = ((maxVal - minVal) / range) * 100;
+        if (clampInputs || source.includes('range')) {
+            priceMinNum.value = priceMinInput.value;
+            priceMaxNum.value = priceMaxInput.value;
+        }
+
+        const range = defaultPriceMax - absolutePriceMin || 1;
+        const sliderMin = parseInt(priceMinInput.value, 10);
+        const sliderMax = parseInt(priceMaxInput.value, 10);
+        const left = ((sliderMin - absolutePriceMin) / range) * 100;
+        const width = ((sliderMax - sliderMin) / range) * 100;
 
         priceRangeFill.style.left = `${left}%`;
         priceRangeFill.style.width = `${width}%`;
     };
 
-    const updatePriceRangeUI = (source) => {
-        syncPriceValues(source);
+    const updatePriceRangeUI = (source, options = {}) => {
+        syncPriceValues(source, options);
     };
 
     const getFilteredCards = () => {
         const query = searchInput.value.trim().toLowerCase();
         const category = categoryFilter.value;
-        const minPrice = parseInt(priceMinInput.value, 10);
-        const maxPrice = parseInt(priceMaxInput.value, 10);
+        const { minPrice, maxPrice } = getEffectivePrices();
 
         return cards.filter((card) => {
             const title = card.dataset.title || '';
@@ -186,9 +382,8 @@ function initCoursesCatalog() {
     };
 
     const hasActiveFilters = () => {
-        const minPrice = parseInt(priceMinInput.value, 10);
-        const maxPrice = parseInt(priceMaxInput.value, 10);
-        const priceChanged = minPrice > defaultPriceMin || maxPrice < defaultPriceMax;
+        const { minPrice, maxPrice } = getEffectivePrices();
+        const priceChanged = minPrice !== defaultPriceMin || maxPrice !== defaultPriceMax;
 
         return searchInput.value.trim() !== '' || categoryFilter.value !== '' || priceChanged;
     };
@@ -399,19 +594,19 @@ function initCoursesCatalog() {
         debouncedPriceFilter();
     });
     priceMinNum.addEventListener('input', () => {
-        updatePriceRangeUI('min-num');
+        updatePriceRangeUI('min-num', { clampInputs: false });
         debouncedPriceFilter();
     });
     priceMaxNum.addEventListener('input', () => {
-        updatePriceRangeUI('max-num');
+        updatePriceRangeUI('max-num', { clampInputs: false });
         debouncedPriceFilter();
     });
     priceMinNum.addEventListener('blur', () => {
-        updatePriceRangeUI('min-num');
+        updatePriceRangeUI('min-num', { clampInputs: true });
         applyFilters();
     });
     priceMaxNum.addEventListener('blur', () => {
-        updatePriceRangeUI('max-num');
+        updatePriceRangeUI('max-num', { clampInputs: true });
         applyFilters();
     });
     updatePriceRangeUI('min-range');

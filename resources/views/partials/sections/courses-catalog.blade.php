@@ -23,7 +23,7 @@ $priceMax = collect($courses)->max('priceValue');
 <section id="courses-catalog" class="pb-20 lg:pb-28 bg-white" data-per-page="6" data-price-min="{{ $priceMin }}" data-price-max="{{ $priceMax }}">
     <div class="page-container">
         {{-- Search & filters --}}
-        <div class="reveal mb-8 sm:mb-10">
+        <div class="catalog-filters relative z-40 mb-8 sm:mb-10">
             <div class="flex flex-col lg:flex-row gap-3 lg:gap-4 lg:items-center">
                 {{-- Search --}}
                 <div class="relative flex-1 min-w-0">
@@ -44,24 +44,24 @@ $priceMax = collect($courses)->max('priceValue');
                         id="course-category-trigger"
                         aria-haspopup="listbox"
                         aria-expanded="false"
-                        class="catalog-filter-control w-full flex items-center justify-between gap-2 text-gray-700 text-left"
+                        class="catalog-filter-control w-full flex items-center justify-between gap-2 px-4 text-gray-700 text-left"
                     >
                         <span id="course-category-label" class="truncate">All Categories</span>
                         <svg class="w-4 h-4 text-gray-400 shrink-0 transition-transform duration-200" id="course-category-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div
                         id="course-category-dropdown"
-                        class="hidden absolute z-30 top-full left-0 right-0 mt-2 bg-white rounded-xl border border-gray-100 shadow-lg overflow-hidden"
+                        class="hidden absolute z-50 top-full left-0 right-0 mt-2 bg-white rounded-xl border border-gray-100 shadow-lg overflow-hidden"
                     >
                         <div class="p-2 border-b border-gray-100">
                             <div class="relative">
-                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                                 <input
                                     type="search"
                                     id="course-category-search"
                                     placeholder="Search categories..."
                                     autocomplete="off"
-                                    class="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand"
+                                    class="category-dropdown-search w-full py-2 pl-10 pr-3 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand"
                                 >
                             </div>
                         </div>
@@ -81,28 +81,28 @@ $priceMax = collect($courses)->max('priceValue');
                         <input
                             type="number"
                             id="price-min-num"
-                            min="{{ $priceMin }}"
+                            min="0"
                             max="{{ $priceMax }}"
                             value="{{ $priceMin }}"
-                            class="price-num-input w-11 sm:w-12"
+                            class="price-num-input w-12 sm:w-14"
                             aria-label="Minimum price"
                         >
                     </div>
                     <div class="price-range-slider relative flex-1 h-6 min-w-[4.5rem]" id="course-price-range">
                         <div class="price-range-track absolute top-1/2 -translate-y-1/2 left-0 right-0 h-1 rounded-full bg-gray-200"></div>
                         <div id="price-range-fill" class="price-range-fill absolute top-1/2 -translate-y-1/2 h-1 rounded-full bg-brand"></div>
-                        <input type="range" id="price-min" min="{{ $priceMin }}" max="{{ $priceMax }}" value="{{ $priceMin }}" class="price-range-input" aria-label="Minimum price slider">
-                        <input type="range" id="price-max" min="{{ $priceMin }}" max="{{ $priceMax }}" value="{{ $priceMax }}" class="price-range-input" aria-label="Maximum price slider">
+                        <input type="range" id="price-min" min="0" max="{{ $priceMax }}" value="{{ $priceMin }}" class="price-range-input" aria-label="Minimum price slider">
+                        <input type="range" id="price-max" min="0" max="{{ $priceMax }}" value="{{ $priceMax }}" class="price-range-input" aria-label="Maximum price slider">
                     </div>
                     <div class="flex items-center gap-1 shrink-0">
                         <span class="text-sm text-gray-400">$</span>
                         <input
                             type="number"
                             id="price-max-num"
-                            min="{{ $priceMin }}"
+                            min="0"
                             max="{{ $priceMax }}"
                             value="{{ $priceMax }}"
-                            class="price-num-input w-11 sm:w-12"
+                            class="price-num-input w-12 sm:w-14"
                             aria-label="Maximum price"
                         >
                     </div>

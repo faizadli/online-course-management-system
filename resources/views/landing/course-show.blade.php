@@ -6,15 +6,6 @@
 
 <section class="course-show pt-20 lg:pt-24 pb-16 lg:pb-20 bg-white">
     <div class="page-container">
-        {{-- Breadcrumb --}}
-        <nav class="reveal mb-6 text-sm text-gray-500" aria-label="Breadcrumb">
-            <ol class="flex flex-wrap items-center gap-2">
-                <li><a href="{{ route('courses') }}" class="hover:text-brand-dark transition-colors">Courses</a></li>
-                <li aria-hidden="true" class="text-gray-300">›</li>
-                <li><span class="font-medium text-gray-900">{{ $course['title'] }}</span></li>
-            </ol>
-        </nav>
-
         <div class="grid lg:grid-cols-[1fr_22rem] xl:grid-cols-[1fr_26rem] gap-8 lg:gap-12 items-start">
             {{-- Main content --}}
             <div class="reveal">
@@ -32,12 +23,12 @@
                 <p class="mt-4 text-gray-600 leading-relaxed">{{ $course['description'] }}</p>
 
                 <div class="mt-6 flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                    <div class="flex items-center gap-2">
+                    <a href="{{ route('instructors.show', $course['instructorSlug']) }}" class="flex items-center gap-2 hover:text-brand-dark transition-colors group">
                         <img src="https://images.unsplash.com/{{ $course['avatar'] }}?w=80&h=80&fit=crop"
                             alt="{{ $course['instructor'] }}"
-                            class="w-8 h-8 rounded-full object-cover">
-                        <span>{{ $course['instructor'] }}</span>
-                    </div>
+                            class="w-8 h-8 rounded-full object-cover ring-2 ring-transparent group-hover:ring-brand-light transition-all">
+                        <span class="font-medium">{{ $course['instructor'] }}</span>
+                    </a>
                     <span class="flex items-center gap-1 font-semibold text-amber-500">
                         <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                         {{ $course['rating'] }}
@@ -84,19 +75,25 @@
                 </div>
 
                 {{-- Instructor --}}
-                <div class="mt-8 checkout-panel !p-6 sm:!p-8">
-                    <h2 class="font-display text-xl font-bold text-gray-900 mb-4">Instructor</h2>
+                <a href="{{ route('instructors.show', $course['instructorSlug']) }}" class="mt-8 checkout-panel !p-6 sm:!p-8 block group hover:border-brand-dark/30 transition-colors">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-display text-xl font-bold text-gray-900">Instructor</h2>
+                        <span class="text-sm font-medium text-brand-dark opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                            View profile
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </span>
+                    </div>
                     <div class="flex items-start gap-4">
                         <img src="https://images.unsplash.com/{{ $course['avatar'] }}?w=120&h=120&fit=crop"
                             alt="{{ $course['instructor'] }}"
-                            class="w-16 h-16 rounded-full object-cover ring-2 ring-brand-light">
+                            class="w-16 h-16 rounded-full object-cover ring-2 ring-brand-light group-hover:ring-brand-dark/30 transition-all">
                         <div>
-                            <h3 class="font-semibold text-gray-900">{{ $course['instructor'] }}</h3>
+                            <h3 class="font-semibold text-gray-900 group-hover:text-brand-dark transition-colors">{{ $course['instructor'] }}</h3>
                             <p class="text-sm text-brand-dark">{{ $course['instructorRole'] }}</p>
-                            <p class="mt-2 text-sm text-gray-500 leading-relaxed">{{ $course['instructorBio'] }}</p>
+                            <p class="mt-2 text-sm text-gray-500 leading-relaxed line-clamp-3">{{ $course['instructorBio'] }}</p>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             {{-- Sidebar --}}

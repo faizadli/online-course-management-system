@@ -18,6 +18,7 @@ Route::get('/courses/{slug}', function (string $slug) {
             'title' => 'UI/UX Design Fundamentals',
             'category' => 'Design & Creative',
             'instructor' => 'Sarah Chen',
+            'instructorSlug' => 'sarah-chen',
             'instructorRole' => 'Senior Product Designer',
             'instructorBio' => 'Sarah has 10+ years of experience designing products for startups and Fortune 500 companies. She specializes in user research, wireframing, and design systems.',
             'avatar' => 'photo-1494790108377-be9c29b29330',
@@ -51,6 +52,7 @@ Route::get('/courses/{slug}', function (string $slug) {
             'title' => 'Full Stack Web Development',
             'category' => 'Tech & Programming',
             'instructor' => 'John Doe',
+            'instructorSlug' => 'john-doe',
             'instructorRole' => 'Lead Software Engineer',
             'instructorBio' => 'John is a full-stack engineer with experience building scalable web applications. He has taught over 15,000 students worldwide.',
             'avatar' => 'photo-1507003211169-0a1dd7228f2d',
@@ -86,12 +88,23 @@ Route::get('/courses/{slug}', function (string $slug) {
         $course['title'] = Str::headline(str_replace('-', ' ', $slug));
         $course['badge'] = null;
         $course['badgeColor'] = '';
+        $course['instructorSlug'] = 'sarah-chen';
     } else {
         $course = $courses[$slug];
     }
 
     return view('landing.course-show', ['course' => $course]);
 })->name('courses.show');
+
+Route::get('/instructors/{slug}', function (string $slug) {
+    $instructors = config('instructors');
+
+    if (! isset($instructors[$slug])) {
+        abort(404);
+    }
+
+    return view('landing.instructor-show', ['instructor' => $instructors[$slug]]);
+})->name('instructors.show');
 
 Route::get('/about', function () {
     return view('landing.about');

@@ -464,6 +464,23 @@ html {
     transform: rotate(180deg);
 }
 
+#course-category-combobox.is-open {
+    z-index: 50;
+}
+
+.category-dropdown-search {
+    padding-left: 2.5rem;
+}
+
+.catalog-filters {
+    isolation: isolate;
+}
+
+#courses-grid {
+    position: relative;
+    z-index: 0;
+}
+
 /* Courses catalog — shared filter control height */
 .catalog-filter-control {
     height: 2.75rem;
@@ -476,6 +493,10 @@ html {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
+#course-category-trigger {
+    padding-inline: 1rem;
+}
+
 .catalog-filter-control:focus,
 .catalog-filter-control:focus-visible {
     outline: none;
@@ -485,7 +506,7 @@ html {
 
 .price-num-input {
     height: 1.75rem;
-    padding-inline: 0.25rem;
+    padding-inline: 0.375rem;
     border: none;
     background: transparent;
     font-size: 0.875rem;
@@ -1252,4 +1273,14 @@ html {
     color: var(--color-brand-dark);
     border-color: var(--color-brand-dark);
     background: var(--color-brand-light);
+}
+
+.instructor-tag {
+    display: inline-flex;
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: rgb(55 65 81);
+    background: var(--color-brand-light);
+    border-radius: 9999px;
 }
