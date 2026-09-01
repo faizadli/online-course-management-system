@@ -734,6 +734,11 @@ html {
 }
 
 /* Cart course row */
+/* Cart course list */
+.cart-course-list .cart-course-row:not(:last-child) {
+    border-bottom: 1px solid rgb(209 213 219);
+}
+
 .cart-course-row {
     display: flex;
     align-items: flex-start;

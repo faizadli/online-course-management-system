@@ -59,7 +59,7 @@ $total = $subtotal - $discount;
                     <p class="mt-1.5 text-sm text-gray-500">{{ count($cartCourses) }} courses selected</p>
                 </div>
 
-                <div class="checkout-panel divide-y divide-gray-100">
+                <div class="checkout-panel cart-course-list">
                     @foreach($cartCourses as $course)
                     <article class="cart-course-row">
                         <a href="{{ route('courses.show', $course['slug']) }}" class="cart-course-link shrink-0">
