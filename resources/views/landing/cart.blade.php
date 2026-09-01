@@ -7,6 +7,7 @@
 @php
 $cartCourses = [
     [
+        'slug' => 'ui-ux-design-fundamentals',
         'title' => 'UI/UX Design Fundamentals',
         'category' => 'Design & Creative',
         'instructor' => 'Sarah Chen',
@@ -16,6 +17,7 @@ $cartCourses = [
         'hours' => 18,
     ],
     [
+        'slug' => 'full-stack-web-development',
         'title' => 'Full Stack Web Development',
         'category' => 'Tech & Programming',
         'instructor' => 'John Doe',
@@ -60,14 +62,16 @@ $total = $subtotal - $discount;
                 <div class="checkout-panel divide-y divide-gray-100">
                     @foreach($cartCourses as $course)
                     <article class="cart-course-row">
-                        <img src="https://images.unsplash.com/{{ $course['image'] }}?w=160&h=100&fit=crop"
-                            alt="{{ $course['title'] }}"
-                            class="cart-course-thumb">
-                        <div class="min-w-0 flex-1">
+                        <a href="{{ route('courses.show', $course['slug']) }}" class="cart-course-link shrink-0">
+                            <img src="https://images.unsplash.com/{{ $course['image'] }}?w=160&h=100&fit=crop"
+                                alt="{{ $course['title'] }}"
+                                class="cart-course-thumb">
+                        </a>
+                        <a href="{{ route('courses.show', $course['slug']) }}" class="cart-course-link min-w-0 flex-1 group">
                             <p class="text-[11px] font-medium uppercase tracking-wide text-brand-dark">{{ $course['category'] }}</p>
-                            <h3 class="mt-0.5 text-sm sm:text-base font-medium text-gray-900 leading-snug">{{ $course['title'] }}</h3>
+                            <h3 class="mt-0.5 text-sm sm:text-base font-medium text-gray-900 leading-snug group-hover:text-brand-dark transition-colors">{{ $course['title'] }}</h3>
                             <p class="mt-1 text-xs text-gray-400">{{ $course['instructor'] }} · {{ $course['lessons'] }} lessons · {{ $course['hours'] }}h</p>
-                        </div>
+                        </a>
                         <div class="flex flex-col items-end justify-between shrink-0 gap-3">
                             <button type="button" class="cart-remove-btn" aria-label="Remove {{ $course['title'] }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -92,7 +96,7 @@ $total = $subtotal - $discount;
                     <div class="checkout-order-lines pt-2">
                         @foreach($cartCourses as $course)
                         <div class="checkout-order-line">
-                            <span class="truncate pr-3">{{ $course['title'] }}</span>
+                            <a href="{{ route('courses.show', $course['slug']) }}" class="truncate pr-3 hover:text-brand-dark transition-colors">{{ $course['title'] }}</a>
                             <span class="tabular-nums shrink-0">${{ $course['price'] }}</span>
                         </div>
                         @endforeach

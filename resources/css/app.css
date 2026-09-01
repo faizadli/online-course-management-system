@@ -748,6 +748,11 @@ html {
     object-fit: cover;
     flex-shrink: 0;
     background: rgb(243 244 246);
+    transition: opacity 0.15s;
+}
+
+.cart-course-link:hover .cart-course-thumb {
+    opacity: 0.85;
 }
 
 .cart-remove-btn {
