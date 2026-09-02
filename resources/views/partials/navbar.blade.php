@@ -52,6 +52,7 @@ $navItems = [
                 </a>
                 @endforeach
                 <a href="{{ route('login') }}" class="nav-link block px-4 py-3 text-sm font-medium rounded-xl">Login</a>
+                <a href="{{ route('register') }}" class="nav-link block px-4 py-3 text-sm font-medium rounded-xl">Register</a>
                 <a href="{{ route('wishlist') }}" class="nav-link block px-4 py-3 text-sm font-medium rounded-xl">Wishlist</a>
                 <a href="{{ route('cart') }}" class="nav-link block px-4 py-3 text-sm font-medium rounded-xl">Cart</a>
             </div>

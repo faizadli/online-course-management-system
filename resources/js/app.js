@@ -1,4 +1,5 @@
 import './bootstrap';
+import { initFormValidation } from './validation';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Landing navbar scroll effect (hero home page only)
@@ -79,6 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Instructor courses search & pagination
     initInstructorCourses();
+
+    // Dashboard modals
+    initDashboardModals();
+
+    // Password show/hide toggle
+    initPasswordToggles();
+
+    // Client-side form validation (Zod)
+    initFormValidation();
 });
 
 function initCheckoutPage() {
@@ -660,4 +670,85 @@ function initCoursesCatalog() {
     });
 
     render();
+}
+
+function initDashboardModals() {
+    const openModal = (id) => {
+        const modal = document.getElementById(id);
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    };
+
+    const closeModal = (modal) => {
+        if (!modal) return;
+        modal.classList.add('hidden');
+        if (!document.querySelector('[data-modal]:not(.hidden)')) {
+            document.body.classList.remove('overflow-hidden');
+        }
+    };
+
+    window.openDashboardModal = openModal;
+
+    document.querySelectorAll('[data-modal-open]').forEach((trigger) => {
+        trigger.addEventListener('click', () => openModal(trigger.dataset.modalOpen));
+    });
+
+    document.querySelectorAll('[data-modal-close]').forEach((trigger) => {
+        trigger.addEventListener('click', () => closeModal(trigger.closest('[data-modal]')));
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        document.querySelectorAll('[data-modal]:not(.hidden)').forEach((modal) => closeModal(modal));
+    });
+
+    document.querySelectorAll('[data-edit-category]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const modal = document.getElementById('edit-category-modal');
+            const form = modal?.querySelector('form');
+            if (!form) return;
+
+            form.action = button.dataset.action || '';
+            const nameInput = form.querySelector('[name="name"]');
+            const descriptionInput = form.querySelector('[name="description"]');
+            const activeInput = form.querySelector('[name="is_active"]');
+
+            if (nameInput) nameInput.value = button.dataset.name || '';
+            if (descriptionInput) descriptionInput.value = button.dataset.description || '';
+            if (activeInput) activeInput.checked = button.dataset.active === '1';
+
+            openModal('edit-category-modal');
+        });
+    });
+}
+
+function initPasswordToggles() {
+    const eyeOpen = `<svg class="password-toggle-icon password-toggle-icon-show" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>`;
+    const eyeClosed = `<svg class="password-toggle-icon password-toggle-icon-hide" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858 3.029a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M3 3l18 18"/></svg>`;
+
+    document.querySelectorAll('input[type="password"]').forEach((input) => {
+        if (input.closest('.password-field')) return;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'password-field';
+
+        input.parentNode.insertBefore(wrapper, input);
+        wrapper.appendChild(input);
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'password-toggle';
+        button.setAttribute('aria-label', 'Show password');
+        button.innerHTML = eyeOpen + eyeClosed;
+
+        button.addEventListener('click', () => {
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            button.classList.toggle('is-visible', isHidden);
+            button.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+        });
+
+        wrapper.appendChild(button);
+    });
 }

@@ -1,5 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\CourseController as AdminCourseController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
+use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Dashboard\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
@@ -110,10 +119,6 @@ Route::get('/about', function () {
     return view('landing.about');
 })->name('about');
 
-Route::get('/dashboard', function () {
-    return view('dashboard.index');
-})->name('dashboard');
-
 Route::get('/cart', function () {
     return view('landing.cart');
 })->name('cart');
@@ -122,10 +127,57 @@ Route::get('/checkout', function () {
     return view('landing.checkout');
 })->name('checkout');
 
-Route::get('/login', function () {
-    return view('landing.login');
-})->name('login');
-
 Route::get('/wishlist', function () {
     return view('landing.wishlist');
 })->name('wishlist');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::get('/register/student', [AuthController::class, 'showStudentRegister'])->name('register.student');
+    Route::post('/register/student', [AuthController::class, 'registerStudent'])->name('register.student.submit');
+    Route::get('/register/instructor', [AuthController::class, 'showInstructorRegister'])->name('register.instructor');
+    Route::post('/register/instructor', [AuthController::class, 'registerInstructor'])->name('register.instructor.submit');
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', function () {
+        return redirect()->route(auth()->user()->role->dashboardRoute());
+    })->name('dashboard');
+
+    Route::get('/dashboard/student', [DashboardController::class, 'student'])
+        ->middleware('role:student')
+        ->name('dashboard.student');
+
+    Route::get('/dashboard/instructor', [DashboardController::class, 'instructor'])
+        ->middleware('role:instructor')
+        ->name('dashboard.instructor');
+
+    Route::get('/dashboard/admin', [AdminDashboardController::class, 'index'])
+        ->middleware('role:admin')
+        ->name('dashboard.admin.index');
+
+    Route::middleware('role:admin')->prefix('dashboard/admin')->name('dashboard.admin.')->group(function () {
+        Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+        Route::patch('/users/{user}/toggle', [AdminUserController::class, 'toggleStatus'])->name('users.toggle');
+
+        Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+        Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+        Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+
+        Route::get('/courses', [AdminCourseController::class, 'index'])->name('courses.index');
+
+        Route::get('/reports', [AdminReportController::class, 'index'])->name('reports.index');
+
+        Route::get('/profile', [AdminProfileController::class, 'show'])->name('profile.index');
+        Route::put('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
+
+        Route::get('/settings', [AdminSettingsController::class, 'show'])->name('settings.index');
+        Route::put('/settings/password', [AdminSettingsController::class, 'updatePassword'])->name('settings.password');
+    });
+});

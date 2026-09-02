@@ -2,6 +2,9 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\EnsureUserHasRole;
+use App\Http\Middleware\RedirectIfAuthenticated;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -23,5 +26,16 @@ class Kernel extends HttpKernel
         'api' => [
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+    ];
+
+    /**
+     * The application's middleware aliases.
+     *
+     * @var array<string, class-string|string>
+     */
+    protected $middlewareAliases = [
+        'auth' => Authenticate::class,
+        'guest' => RedirectIfAuthenticated::class,
+        'role' => EnsureUserHasRole::class,
     ];
 }
