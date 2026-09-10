@@ -153,4 +153,8 @@ export const validationSchemas = {
         expertise: z.string().max(255, 'Expertise must not exceed 255 characters.').optional().or(z.literal('')),
         bio: z.string().max(1000, 'Bio must not exceed 1000 characters.').optional().or(z.literal('')),
     }),
+
+    'student-assessment': z.object({
+        answers: z.record(z.string(), z.any()).optional(),
+    }),
 };

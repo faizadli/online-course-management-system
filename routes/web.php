@@ -8,7 +8,6 @@ use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Instructor\AssessmentController as InstructorAssessmentController;
 use App\Http\Controllers\Instructor\CourseBuilderController as InstructorCourseBuilderController;
 use App\Http\Controllers\Instructor\CourseController as InstructorCourseController;
@@ -17,6 +16,12 @@ use App\Http\Controllers\Instructor\EnrolmentController as InstructorEnrolmentCo
 use App\Http\Controllers\Instructor\ProfileController as InstructorProfileController;
 use App\Http\Controllers\Instructor\ReportController as InstructorReportController;
 use App\Http\Controllers\Instructor\SettingsController as InstructorSettingsController;
+use App\Http\Controllers\Student\AssessmentController as StudentAssessmentController;
+use App\Http\Controllers\Student\CourseController as StudentCourseController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\FeedbackController as StudentFeedbackController;
+use App\Http\Controllers\Student\ProfileController as StudentProfileController;
+use App\Http\Controllers\Student\SettingsController as StudentSettingsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
@@ -157,9 +162,29 @@ Route::middleware('auth')->group(function () {
         return redirect()->route(auth()->user()->role->dashboardRoute());
     })->name('dashboard');
 
-    Route::get('/dashboard/student', [DashboardController::class, 'student'])
+    Route::get('/dashboard/student', [StudentDashboardController::class, 'index'])
         ->middleware('role:student')
-        ->name('dashboard.student');
+        ->name('dashboard.student.index');
+
+    Route::middleware('role:student')->prefix('dashboard/student')->name('dashboard.student.')->group(function () {
+        Route::get('/courses', [StudentCourseController::class, 'index'])->name('courses.index');
+        Route::get('/courses/browse', [StudentCourseController::class, 'browse'])->name('courses.browse');
+        Route::post('/courses/{course}/enrol', [StudentCourseController::class, 'enrol'])->name('courses.enrol');
+        Route::get('/courses/{course}', [StudentCourseController::class, 'show'])->name('courses.show');
+        Route::patch('/courses/{course}/progress', [StudentCourseController::class, 'updateProgress'])->name('courses.progress');
+
+        Route::get('/assessments', [StudentAssessmentController::class, 'index'])->name('assessments.index');
+        Route::get('/assessments/{assessment}', [StudentAssessmentController::class, 'show'])->name('assessments.show');
+        Route::post('/assessments/{assessment}/submit', [StudentAssessmentController::class, 'submit'])->name('assessments.submit');
+
+        Route::get('/feedback', [StudentFeedbackController::class, 'index'])->name('feedback.index');
+        Route::get('/feedback/{submission}', [StudentFeedbackController::class, 'show'])->name('feedback.show');
+
+        Route::get('/profile', [StudentProfileController::class, 'show'])->name('profile.index');
+        Route::put('/profile', [StudentProfileController::class, 'update'])->name('profile.update');
+        Route::get('/settings', [StudentSettingsController::class, 'show'])->name('settings.index');
+        Route::put('/settings/password', [StudentSettingsController::class, 'updatePassword'])->name('settings.password');
+    });
 
     Route::get('/dashboard/instructor', [InstructorDashboardController::class, 'index'])
         ->middleware('role:instructor')

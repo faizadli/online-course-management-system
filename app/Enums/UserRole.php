@@ -20,7 +20,7 @@ enum UserRole: string
     public function dashboardRoute(): string
     {
         return match ($this) {
-            self::Student => 'dashboard.student',
+            self::Student => 'dashboard.student.index',
             self::Instructor => 'dashboard.instructor.index',
             self::Admin => 'dashboard.admin.index',
         };

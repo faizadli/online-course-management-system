@@ -11,6 +11,7 @@ class AssessmentSubmission extends Model
         'assessment_id',
         'student_id',
         'status',
+        'answers',
         'score',
         'feedback',
         'submitted_at',
@@ -18,6 +19,7 @@ class AssessmentSubmission extends Model
     ];
 
     protected $casts = [
+        'answers' => 'array',
         'score' => 'decimal:2',
         'submitted_at' => 'datetime',
         'graded_at' => 'datetime',

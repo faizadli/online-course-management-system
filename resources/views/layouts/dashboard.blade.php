@@ -44,7 +44,9 @@
                 @php
                     $href = isset($item['route']) && $item['route'] ? route($item['route']) : '#';
                     $activePattern = $item['active'] ?? (($item['route'] ?? null) ? $item['route'].'*' : null);
-                    $isActive = $activePattern && request()->routeIs($activePattern);
+                    $isActive = is_array($activePattern)
+                        ? request()->routeIs(...$activePattern)
+                        : ($activePattern && request()->routeIs($activePattern));
                 @endphp
                 <a href="{{ $href }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 {{ $isActive ? 'bg-brand-light text-brand-dark' : 'text-gray-600 hover:bg-gray-50 hover:text-brand-dark' }}">
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $item['icon'] }}"/></svg>
@@ -78,7 +80,7 @@
             <div class="p-4 m-4 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 text-white">
                 <p class="text-sm font-semibold">Continue learning</p>
                 <p class="text-xs text-gray-400 mt-1">Pick up where you left off.</p>
-                <a href="{{ route('courses') }}" class="mt-3 block w-full py-2 bg-brand text-gray-800 text-sm font-semibold rounded-xl hover:bg-brand-dark transition-all duration-300 text-center">
+                <a href="{{ route('dashboard.student.courses.browse') }}" class="mt-3 block w-full py-2 bg-brand text-gray-800 text-sm font-semibold rounded-xl hover:bg-brand-dark transition-all duration-300 text-center">
                     Browse Courses
                 </a>
             </div>
