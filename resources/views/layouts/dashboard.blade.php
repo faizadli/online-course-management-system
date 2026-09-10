@@ -75,16 +75,6 @@
                     </button>
                 </form>
             </nav>
-
-            @if($role === 'student')
-            <div class="p-4 m-4 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-                <p class="text-sm font-semibold">Continue learning</p>
-                <p class="text-xs text-gray-400 mt-1">Pick up where you left off.</p>
-                <a href="{{ route('dashboard.student.courses.browse') }}" class="mt-3 block w-full py-2 bg-brand text-gray-800 text-sm font-semibold rounded-xl hover:bg-brand-dark transition-all duration-300 text-center">
-                    Browse Courses
-                </a>
-            </div>
-            @endif
         </aside>
 
         <div class="flex-1 flex flex-col min-w-0 min-h-0">
