@@ -21,7 +21,7 @@ enum UserRole: string
     {
         return match ($this) {
             self::Student => 'dashboard.student',
-            self::Instructor => 'dashboard.instructor',
+            self::Instructor => 'dashboard.instructor.index',
             self::Admin => 'dashboard.admin.index',
         };
     }

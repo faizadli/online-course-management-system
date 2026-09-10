@@ -24,11 +24,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans bg-gray-50 text-gray-900 antialiased">
-    <div class="flex min-h-screen">
+<body class="font-sans bg-gray-50 text-gray-900 antialiased overflow-hidden">
+    <div class="flex h-screen overflow-hidden">
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/30 z-40 hidden lg:hidden"></div>
 
-        <aside id="dashboard-sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-100 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0">
+        <aside id="dashboard-sidebar" class="fixed lg:sticky top-0 left-0 z-50 w-64 h-screen shrink-0 bg-white border-r border-gray-100 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0">
             <div class="p-6">
                 <a href="{{ route('home') }}" class="flex items-center gap-2">
                     <div class="w-8 h-8 bg-brand rounded-lg flex items-center justify-center">
@@ -43,7 +43,8 @@
                 @foreach($menuItems as $item)
                 @php
                     $href = isset($item['route']) && $item['route'] ? route($item['route']) : '#';
-                    $isActive = isset($item['route']) && $item['route'] && request()->routeIs($item['route'].'*');
+                    $activePattern = $item['active'] ?? (($item['route'] ?? null) ? $item['route'].'*' : null);
+                    $isActive = $activePattern && request()->routeIs($activePattern);
                 @endphp
                 <a href="{{ $href }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 {{ $isActive ? 'bg-brand-light text-brand-dark' : 'text-gray-600 hover:bg-gray-50 hover:text-brand-dark' }}">
                     <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $item['icon'] }}"/></svg>
@@ -81,19 +82,11 @@
                     Browse Courses
                 </a>
             </div>
-            @elseif($role === 'instructor')
-            <div class="p-4 m-4 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-                <p class="text-sm font-semibold">Create a new course</p>
-                <p class="text-xs text-gray-400 mt-1">Start with a draft and publish later.</p>
-                <button type="button" class="mt-3 w-full py-2 bg-brand text-gray-800 text-sm font-semibold rounded-xl hover:bg-brand-dark transition-all duration-300">
-                    New Course
-                </button>
-            </div>
             @endif
         </aside>
 
-        <div class="flex-1 flex flex-col min-w-0">
-            <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="flex-1 flex flex-col min-w-0 min-h-0">
+            <header class="shrink-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100">
                 <div class="flex items-center gap-4 px-4 sm:px-6 lg:px-8 h-16">
                     <button id="sidebar-toggle" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors duration-300" aria-label="Toggle sidebar">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -122,7 +115,7 @@
                 </div>
             </header>
 
-            <main class="flex-1 p-4 sm:p-6 lg:p-8 custom-scrollbar overflow-y-auto">
+            <main class="flex-1 min-h-0 p-4 sm:p-6 lg:p-8 custom-scrollbar overflow-y-auto">
                 @yield('content')
             </main>
         </div>

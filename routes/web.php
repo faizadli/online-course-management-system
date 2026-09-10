@@ -9,6 +9,14 @@ use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Instructor\AssessmentController as InstructorAssessmentController;
+use App\Http\Controllers\Instructor\CourseBuilderController as InstructorCourseBuilderController;
+use App\Http\Controllers\Instructor\CourseController as InstructorCourseController;
+use App\Http\Controllers\Instructor\DashboardController as InstructorDashboardController;
+use App\Http\Controllers\Instructor\EnrolmentController as InstructorEnrolmentController;
+use App\Http\Controllers\Instructor\ProfileController as InstructorProfileController;
+use App\Http\Controllers\Instructor\ReportController as InstructorReportController;
+use App\Http\Controllers\Instructor\SettingsController as InstructorSettingsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
@@ -153,9 +161,42 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:student')
         ->name('dashboard.student');
 
-    Route::get('/dashboard/instructor', [DashboardController::class, 'instructor'])
+    Route::get('/dashboard/instructor', [InstructorDashboardController::class, 'index'])
         ->middleware('role:instructor')
-        ->name('dashboard.instructor');
+        ->name('dashboard.instructor.index');
+
+    Route::middleware('role:instructor')->prefix('dashboard/instructor')->name('dashboard.instructor.')->group(function () {
+        Route::get('/courses', [InstructorCourseController::class, 'index'])->name('courses.index');
+        Route::post('/courses', [InstructorCourseController::class, 'store'])->name('courses.store');
+        Route::put('/courses/{course}', [InstructorCourseController::class, 'update'])->name('courses.update');
+        Route::delete('/courses/{course}', [InstructorCourseController::class, 'destroy'])->name('courses.destroy');
+        Route::patch('/courses/{course}/toggle', [InstructorCourseController::class, 'toggleStatus'])->name('courses.toggle');
+
+        Route::get('/builder', [InstructorCourseBuilderController::class, 'index'])->name('builder.index');
+        Route::get('/builder/{course}', [InstructorCourseBuilderController::class, 'show'])->name('builder.show');
+        Route::put('/builder/{course}/info', [InstructorCourseBuilderController::class, 'updateInfo'])->name('builder.info');
+        Route::post('/builder/{course}/chapters', [InstructorCourseBuilderController::class, 'storeChapter'])->name('builder.chapters.store');
+        Route::delete('/builder/{course}/chapters/{chapter}', [InstructorCourseBuilderController::class, 'destroyChapter'])->name('builder.chapters.destroy');
+        Route::post('/builder/{course}/chapters/{chapter}/contents', [InstructorCourseBuilderController::class, 'storeContent'])->name('builder.contents.store');
+        Route::delete('/builder/{course}/chapters/{chapter}/contents/{content}', [InstructorCourseBuilderController::class, 'destroyContent'])->name('builder.contents.destroy');
+
+        Route::get('/assessments', [InstructorAssessmentController::class, 'index'])->name('assessments.index');
+        Route::post('/assessments', [InstructorAssessmentController::class, 'store'])->name('assessments.store');
+        Route::get('/assessments/{assessment}', [InstructorAssessmentController::class, 'show'])->name('assessments.show');
+        Route::patch('/assessments/{assessment}/toggle', [InstructorAssessmentController::class, 'toggleStatus'])->name('assessments.toggle');
+        Route::delete('/assessments/{assessment}', [InstructorAssessmentController::class, 'destroy'])->name('assessments.destroy');
+        Route::post('/assessments/{assessment}/questions', [InstructorAssessmentController::class, 'storeQuestion'])->name('assessments.questions.store');
+        Route::delete('/assessments/{assessment}/questions/{question}', [InstructorAssessmentController::class, 'destroyQuestion'])->name('assessments.questions.destroy');
+        Route::put('/submissions/{submission}/grade', [InstructorAssessmentController::class, 'gradeSubmission'])->name('submissions.grade');
+
+        Route::get('/enrolments', [InstructorEnrolmentController::class, 'index'])->name('enrolments.index');
+        Route::get('/reports', [InstructorReportController::class, 'index'])->name('reports.index');
+
+        Route::get('/profile', [InstructorProfileController::class, 'show'])->name('profile.index');
+        Route::put('/profile', [InstructorProfileController::class, 'update'])->name('profile.update');
+        Route::get('/settings', [InstructorSettingsController::class, 'show'])->name('settings.index');
+        Route::put('/settings/password', [InstructorSettingsController::class, 'updatePassword'])->name('settings.password');
+    });
 
     Route::get('/dashboard/admin', [AdminDashboardController::class, 'index'])
         ->middleware('role:admin')

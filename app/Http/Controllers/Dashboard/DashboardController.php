@@ -11,9 +11,4 @@ class DashboardController extends Controller
     {
         return view('dashboard.student', ['role' => 'student']);
     }
-
-    public function instructor(): View
-    {
-        return view('dashboard.instructor', ['role' => 'instructor']);
-    }
 }
