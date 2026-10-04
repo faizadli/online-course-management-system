@@ -100,7 +100,7 @@
 </div>
 
 <x-dashboard.modal id="create-course-modal" title="Create Course" size="lg">
-    <form action="{{ route('dashboard.instructor.courses.store') }}" method="post" class="space-y-4" data-validate="instructor-course-create" novalidate>
+    <form action="{{ route('dashboard.instructor.courses.store') }}" method="post" enctype="multipart/form-data" class="space-y-4" data-validate="instructor-course-create" novalidate>
         @csrf
         <div class="form-field">
             <label class="dashboard-label" for="title">Course Title</label>
@@ -142,6 +142,16 @@
             <label class="dashboard-label" for="short_description">Short Description</label>
             <textarea id="short_description" name="short_description" rows="2" class="dashboard-input @error('short_description') is-invalid @enderror" placeholder="One or two sentences about the course...">{{ old('short_description') }}</textarea>
             @include('partials.field-error', ['name' => 'short_description'])
+        </div>
+        <div class="form-field">
+            <label class="dashboard-label" for="description">Full Description</label>
+            <textarea id="description" name="description" rows="3" class="dashboard-input @error('description') is-invalid @enderror" placeholder="What will students learn?">{{ old('description') }}</textarea>
+            @include('partials.field-error', ['name' => 'description'])
+        </div>
+        <div class="form-field">
+            <label class="dashboard-label" for="thumbnail">Thumbnail <span class="text-gray-400 font-normal">(JPG, PNG or WebP · max 3 MB)</span></label>
+            <input type="file" id="thumbnail" name="thumbnail" accept="image/png,image/jpeg,image/webp" class="dashboard-input @error('thumbnail') is-invalid @enderror">
+            @include('partials.field-error', ['name' => 'thumbnail'])
         </div>
         <div class="flex items-center justify-end gap-3 pt-2">
             <button type="button" data-modal-close class="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-800">Cancel</button>

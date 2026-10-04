@@ -21,6 +21,7 @@ class StoreCourseRequest extends FormRequest
             'language' => ['nullable', 'string', 'max:50'],
             'short_description' => ['nullable', 'string', 'max:500'],
             'description' => ['nullable', 'string', 'max:5000'],
+            'thumbnail' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
         ];
     }
 
@@ -31,6 +32,8 @@ class StoreCourseRequest extends FormRequest
             'category_id.exists' => 'Selected category is invalid.',
             'price.numeric' => 'Price must be a number.',
             'price.min' => 'Price cannot be negative.',
+            'thumbnail.image' => 'The thumbnail must be an image file.',
+            'thumbnail.max' => 'The thumbnail may not be larger than 3 MB.',
         ];
     }
 }

@@ -10,6 +10,8 @@ use App\Models\Assessment;
 use App\Models\AssessmentQuestion;
 use App\Models\AssessmentSubmission;
 use App\Models\Course;
+use App\Services\GeminiException;
+use App\Services\GeminiScoringService;
 use App\Support\AdminPagination;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -120,11 +122,26 @@ class AssessmentController extends Controller
                 ->all();
         }
 
+        $rubric = null;
+        if ($assessment->type === 'essay') {
+            $rubric = collect($validated['rubric'] ?? [])
+                ->filter(fn ($row) => filled($row['criteria'] ?? null))
+                ->map(fn ($row) => [
+                    'criteria' => $row['criteria'],
+                    'description' => $row['description'] ?? '',
+                    'weight' => (int) ($row['weight'] ?? 0),
+                ])
+                ->values()
+                ->all() ?: null;
+        }
+
         $assessment->questions()->create([
             'question' => $validated['question'],
             'options' => $options,
             'model_answer' => $validated['model_answer'] ?? null,
-            'points' => $validated['points'] ?? 1,
+            'rubric' => $rubric,
+            'explanation' => $assessment->type === 'mcq' ? ($validated['explanation'] ?? null) : null,
+            'points' => $validated['points'] ?? ($assessment->type === 'essay' ? 10 : 1),
             'sort_order' => $sortOrder,
         ]);
 
@@ -169,6 +186,22 @@ class AssessmentController extends Controller
             ->with('success', 'Assessment deleted.');
     }
 
+    public function updateSettings(Request $request, Assessment $assessment): RedirectResponse
+    {
+        $this->authorizeAssessment($assessment);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1000'],
+            'pass_score' => ['required', 'integer', 'min:0', 'max:100'],
+            'time_limit_minutes' => ['nullable', 'integer', 'min:1', 'max:300'],
+        ]);
+
+        $assessment->update($validated);
+
+        return back()->with('success', 'Assessment settings saved.');
+    }
+
     public function gradeSubmission(UpdateSubmissionRequest $request, AssessmentSubmission $submission): RedirectResponse
     {
         $this->authorizeAssessment($submission->assessment);
@@ -185,6 +218,36 @@ class AssessmentController extends Controller
         return back()->with('success', 'Submission graded successfully.');
     }
 
+    /** Re-run the Gemini AI scoring for an essay submission (e.g. after a temporary API failure). */
+    public function rescoreSubmission(AssessmentSubmission $submission, GeminiScoringService $gemini): RedirectResponse
+    {
+        $assessment = $submission->assessment;
+        $this->authorizeAssessment($assessment);
+
+        if ($assessment->type !== 'essay') {
+            return back()->withErrors(['assessment' => 'Only essay submissions can be scored by AI.']);
+        }
+
+        try {
+            $result = $gemini->scoreAssessment($assessment, $submission->answers ?? []);
+        } catch (GeminiException $e) {
+            $submission->update(['ai_error' => $e->getMessage()]);
+
+            return back()->withErrors(['assessment' => 'AI scoring failed: '.$e->getMessage()]);
+        }
+
+        $submission->update([
+            'status' => 'ai_graded',
+            'score' => $result['score'],
+            'feedback' => $result['feedback'],
+            'ai_details' => $result['details'],
+            'ai_model' => $result['model'],
+            'ai_error' => null,
+            'graded_at' => now(),
+        ]);
+
+        return back()->with('success', 'Submission re-scored by AI: '.$result['score'].'%.');
+    }
     private function authorizeAssessment(Assessment $assessment): void
     {
         abort_unless($assessment->course?->instructor_id === auth()->id(), 403);

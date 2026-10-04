@@ -7,6 +7,7 @@ use App\Models\Assessment;
 use App\Models\AssessmentSubmission;
 use App\Models\Course;
 use App\Models\Enrolment;
+use App\Models\Payment;
 use Illuminate\View\View;
 
 class ReportController extends Controller
@@ -22,7 +23,7 @@ class ReportController extends Controller
             'total_enrolments' => Enrolment::query()->whereIn('course_id', $courseIds)->count(),
             'active_students' => Enrolment::query()->whereIn('course_id', $courseIds)->where('status', 'active')->distinct('student_id')->count('student_id'),
             'completed_enrolments' => Enrolment::query()->whereIn('course_id', $courseIds)->where('status', 'completed')->count(),
-            'revenue' => Enrolment::query()->whereIn('course_id', $courseIds)->sum('amount_paid'),
+            'revenue' => (float) Payment::query()->where('status', 'paid')->whereHas('enrolment', fn ($q) => $q->whereIn('course_id', $courseIds))->sum('amount'),
             'assessments' => Assessment::query()->whereIn('course_id', $courseIds)->count(),
             'avg_score' => round((float) AssessmentSubmission::query()
                 ->whereHas('assessment', fn ($q) => $q->whereIn('course_id', $courseIds))

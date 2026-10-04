@@ -96,7 +96,7 @@ export const validationSchemas = {
     'instructor-course-update': z.object({
         title: requiredString('Course title').max(255, 'Course title must not exceed 255 characters.'),
         category_id: z.any().optional(),
-        status: requiredString('Status'),
+        status: z.any().optional(),
         price: z.any().optional(),
         level: z.any().optional(),
         language: z.any().optional(),
@@ -117,9 +117,7 @@ export const validationSchemas = {
             duration_minutes: z.any().optional(),
         })
         .superRefine((data, ctx) => {
-            if ((data.type === 'video' || data.type === 'pdf') && !data.url) {
-                ctx.addIssue({ code: 'custom', message: 'URL is required for video and PDF content.', path: ['url'] });
-            }
+            // Video / PDF: either a file upload or a URL is accepted (validated server-side).
             if (data.type === 'text' && !data.body) {
                 ctx.addIssue({ code: 'custom', message: 'Content body is required for text lessons.', path: ['body'] });
             }

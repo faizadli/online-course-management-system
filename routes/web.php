@@ -8,6 +8,11 @@ use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Public\CartController;
+use App\Http\Controllers\Public\CatalogController;
+use App\Http\Controllers\Public\CheckoutController;
+use App\Http\Controllers\Public\HomeController;
+use App\Http\Controllers\Public\WishlistController;
 use App\Http\Controllers\Instructor\AssessmentController as InstructorAssessmentController;
 use App\Http\Controllers\Instructor\CourseBuilderController as InstructorCourseBuilderController;
 use App\Http\Controllers\Instructor\CourseController as InstructorCourseController;
@@ -23,127 +28,37 @@ use App\Http\Controllers\Student\FeedbackController as StudentFeedbackController
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Student\SettingsController as StudentSettingsController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 
-Route::get('/', function () {
-    return view('landing.index');
-})->name('home');
-
-Route::get('/courses', function () {
-    return view('landing.courses');
-})->name('courses');
-
-Route::get('/courses/{slug}', function (string $slug) {
-    $courses = [
-        'ui-ux-design-fundamentals' => [
-            'slug' => 'ui-ux-design-fundamentals',
-            'title' => 'UI/UX Design Fundamentals',
-            'category' => 'Design & Creative',
-            'instructor' => 'Sarah Chen',
-            'instructorSlug' => 'sarah-chen',
-            'instructorRole' => 'Senior Product Designer',
-            'instructorBio' => 'Sarah has 10+ years of experience designing products for startups and Fortune 500 companies. She specializes in user research, wireframing, and design systems.',
-            'avatar' => 'photo-1494790108377-be9c29b29330',
-            'image' => 'photo-1561070791-2526d30994b5',
-            'price' => 49,
-            'originalPrice' => 99,
-            'rating' => '4.9',
-            'students' => '3,240',
-            'lessons' => 24,
-            'hours' => 18,
-            'badge' => 'Best Seller',
-            'badgeColor' => 'bg-red-500',
-            'description' => 'Master the core principles of UI/UX design — from user research and wireframing to prototyping and usability testing. Build a portfolio-ready project by the end of this course.',
-            'learn' => [
-                'Conduct user research and create personas',
-                'Design wireframes and interactive prototypes',
-                'Apply visual design principles and typography',
-                'Build a complete design system in Figma',
-                'Run usability tests and iterate on feedback',
-                'Present your work to stakeholders confidently',
-            ],
-            'curriculum' => [
-                ['title' => 'Introduction to UI/UX', 'lessons' => 4, 'duration' => '2h 30m', 'items' => ['What is UI/UX design?', 'Design thinking process', 'Tools overview', 'Setting up Figma']],
-                ['title' => 'User Research', 'lessons' => 5, 'duration' => '3h 15m', 'items' => ['Research methods', 'Creating personas', 'User journey mapping', 'Competitive analysis', 'Research presentation']],
-                ['title' => 'Wireframing & Prototyping', 'lessons' => 6, 'duration' => '4h', 'items' => ['Low-fidelity wireframes', 'Information architecture', 'Interactive prototypes', 'Micro-interactions', 'Prototype testing', 'Iteration workflow']],
-                ['title' => 'Visual Design & Portfolio', 'lessons' => 9, 'duration' => '8h 15m', 'items' => ['Color theory', 'Typography systems', 'Design systems', 'Final project brief', 'Portfolio presentation']],
-            ],
-        ],
-        'full-stack-web-development' => [
-            'slug' => 'full-stack-web-development',
-            'title' => 'Full Stack Web Development',
-            'category' => 'Tech & Programming',
-            'instructor' => 'John Doe',
-            'instructorSlug' => 'john-doe',
-            'instructorRole' => 'Lead Software Engineer',
-            'instructorBio' => 'John is a full-stack engineer with experience building scalable web applications. He has taught over 15,000 students worldwide.',
-            'avatar' => 'photo-1507003211169-0a1dd7228f2d',
-            'image' => 'photo-1498050108023-c5249f4df085',
-            'price' => 79,
-            'originalPrice' => 149,
-            'rating' => '4.8',
-            'students' => '5,120',
-            'lessons' => 36,
-            'hours' => 42,
-            'badge' => 'New',
-            'badgeColor' => 'bg-brand',
-            'description' => 'Learn to build modern web applications from scratch using HTML, CSS, JavaScript, and Laravel. Deploy a full-stack project to production by the end of the course.',
-            'learn' => [
-                'Build responsive layouts with HTML & CSS',
-                'Write clean JavaScript and manage state',
-                'Create RESTful APIs with Laravel',
-                'Connect frontend to backend seamlessly',
-                'Implement authentication and authorization',
-                'Deploy your app to a live server',
-            ],
-            'curriculum' => [
-                ['title' => 'Frontend Foundations', 'lessons' => 8, 'duration' => '6h', 'items' => ['HTML semantics', 'CSS Flexbox & Grid', 'Responsive design', 'JavaScript basics']],
-                ['title' => 'Backend with Laravel', 'lessons' => 12, 'duration' => '14h', 'items' => ['Laravel setup', 'Routing & controllers', 'Eloquent ORM', 'API development']],
-                ['title' => 'Full Stack Project', 'lessons' => 16, 'duration' => '22h', 'items' => ['Project planning', 'Building features', 'Testing', 'Deployment']],
-            ],
-        ],
-    ];
-
-    if (! isset($courses[$slug])) {
-        $course = $courses['ui-ux-design-fundamentals'];
-        $course['slug'] = $slug;
-        $course['title'] = Str::headline(str_replace('-', ' ', $slug));
-        $course['badge'] = null;
-        $course['badgeColor'] = '';
-        $course['instructorSlug'] = 'sarah-chen';
-    } else {
-        $course = $courses[$slug];
-    }
-
-    return view('landing.course-show', ['course' => $course]);
-})->name('courses.show');
-
-Route::get('/instructors/{slug}', function (string $slug) {
-    $instructors = config('instructors');
-
-    if (! isset($instructors[$slug])) {
-        abort(404);
-    }
-
-    return view('landing.instructor-show', ['instructor' => $instructors[$slug]]);
-})->name('instructors.show');
+// ---------------------------------------------------------------------------
+// Public pages
+// ---------------------------------------------------------------------------
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/courses', [HomeController::class, 'courses'])->name('courses');
+Route::get('/courses/{course:slug}', [CatalogController::class, 'show'])->name('courses.show');
+Route::get('/courses/{course:slug}/preview/{content}', [CatalogController::class, 'freePreview'])->name('courses.lesson-preview');
+Route::get('/instructors/{user}', [CatalogController::class, 'instructor'])->name('instructors.show');
 
 Route::get('/about', function () {
     return view('landing.about');
 })->name('about');
 
-Route::get('/cart', function () {
-    return view('landing.cart');
-})->name('cart');
+// Cart & wishlist (session based so guests can collect courses before logging in)
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
+Route::post('/cart/{course:slug}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/{course:slug}/buy', [CartController::class, 'buyNow'])->name('cart.buy');
+Route::delete('/cart/{course:slug}', [CartController::class, 'remove'])->name('cart.remove');
 
-Route::get('/checkout', function () {
-    return view('landing.checkout');
-})->name('checkout');
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
+Route::post('/wishlist/{course:slug}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+Route::post('/wishlist/{course:slug}/cart', [WishlistController::class, 'moveToCart'])->name('wishlist.cart');
+Route::post('/wishlist-all/cart', [WishlistController::class, 'moveAllToCart'])->name('wishlist.cart.all');
 
-Route::get('/wishlist', function () {
-    return view('landing.wishlist');
-})->name('wishlist');
-
+// Checkout (students only)
+Route::middleware(['auth', 'role:student'])->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
+    Route::post('/checkout', [CheckoutController::class, 'pay'])->name('checkout.pay');
+    Route::get('/checkout/receipt/{reference}', [CheckoutController::class, 'receipt'])->name('checkout.receipt');
+});
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
@@ -169,9 +84,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:student')->prefix('dashboard/student')->name('dashboard.student.')->group(function () {
         Route::get('/courses', [StudentCourseController::class, 'index'])->name('courses.index');
         Route::get('/courses/browse', [StudentCourseController::class, 'browse'])->name('courses.browse');
-        Route::post('/courses/{course}/enrol', [StudentCourseController::class, 'enrol'])->name('courses.enrol');
         Route::get('/courses/{course}', [StudentCourseController::class, 'show'])->name('courses.show');
-        Route::patch('/courses/{course}/progress', [StudentCourseController::class, 'updateProgress'])->name('courses.progress');
+        Route::get('/courses/{course}/lessons/{content}', [StudentCourseController::class, 'lesson'])->name('courses.lesson');
+        Route::post('/courses/{course}/lessons/{content}/complete', [StudentCourseController::class, 'completeLesson'])->name('courses.lesson.complete');
 
         Route::get('/assessments', [StudentAssessmentController::class, 'index'])->name('assessments.index');
         Route::get('/assessments/{assessment}', [StudentAssessmentController::class, 'show'])->name('assessments.show');
@@ -196,6 +111,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/courses/{course}', [InstructorCourseController::class, 'update'])->name('courses.update');
         Route::delete('/courses/{course}', [InstructorCourseController::class, 'destroy'])->name('courses.destroy');
         Route::patch('/courses/{course}/toggle', [InstructorCourseController::class, 'toggleStatus'])->name('courses.toggle');
+        Route::patch('/courses/{course}/archive', [InstructorCourseController::class, 'archive'])->name('courses.archive');
 
         Route::get('/builder', [InstructorCourseBuilderController::class, 'index'])->name('builder.index');
         Route::get('/builder/{course}', [InstructorCourseBuilderController::class, 'show'])->name('builder.show');
@@ -204,6 +120,13 @@ Route::middleware('auth')->group(function () {
         Route::delete('/builder/{course}/chapters/{chapter}', [InstructorCourseBuilderController::class, 'destroyChapter'])->name('builder.chapters.destroy');
         Route::post('/builder/{course}/chapters/{chapter}/contents', [InstructorCourseBuilderController::class, 'storeContent'])->name('builder.contents.store');
         Route::delete('/builder/{course}/chapters/{chapter}/contents/{content}', [InstructorCourseBuilderController::class, 'destroyContent'])->name('builder.contents.destroy');
+        Route::get('/builder/{course}/preview', [CatalogController::class, 'preview'])->name('builder.preview');
+        Route::put('/builder/{course}/chapters/{chapter}', [InstructorCourseBuilderController::class, 'updateChapter'])->name('builder.chapters.update');
+        Route::post('/builder/{course}/chapters/{chapter}/move', [InstructorCourseBuilderController::class, 'moveChapter'])->name('builder.chapters.move');
+        Route::get('/builder/{course}/chapters/{chapter}/contents/{content}/edit', [InstructorCourseBuilderController::class, 'editContent'])->name('builder.contents.edit');
+        Route::put('/builder/{course}/chapters/{chapter}/contents/{content}', [InstructorCourseBuilderController::class, 'updateContent'])->name('builder.contents.update');
+        Route::post('/builder/{course}/chapters/{chapter}/contents/{content}/move', [InstructorCourseBuilderController::class, 'moveContent'])->name('builder.contents.move');
+        Route::post('/builder/{course}/chapters/{chapter}/assessments', [InstructorCourseBuilderController::class, 'storeAssessment'])->name('builder.assessments.store');
 
         Route::get('/assessments', [InstructorAssessmentController::class, 'index'])->name('assessments.index');
         Route::post('/assessments', [InstructorAssessmentController::class, 'store'])->name('assessments.store');
@@ -213,6 +136,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/assessments/{assessment}/questions', [InstructorAssessmentController::class, 'storeQuestion'])->name('assessments.questions.store');
         Route::delete('/assessments/{assessment}/questions/{question}', [InstructorAssessmentController::class, 'destroyQuestion'])->name('assessments.questions.destroy');
         Route::put('/submissions/{submission}/grade', [InstructorAssessmentController::class, 'gradeSubmission'])->name('submissions.grade');
+        Route::post('/submissions/{submission}/rescore', [InstructorAssessmentController::class, 'rescoreSubmission'])->name('submissions.rescore');
+        Route::put('/assessments/{assessment}', [InstructorAssessmentController::class, 'updateSettings'])->name('assessments.update');
 
         Route::get('/enrolments', [InstructorEnrolmentController::class, 'index'])->name('enrolments.index');
         Route::get('/reports', [InstructorReportController::class, 'index'])->name('reports.index');

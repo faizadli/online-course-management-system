@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\AssessmentSubmission;
 use App\Models\Category;
+use App\Models\ChapterContent;
+use App\Models\ContentCompletion;
 use App\Models\Course;
 use App\Models\Enrolment;
 use App\Support\AdminPagination;
+use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -72,42 +75,19 @@ class CourseController extends Controller
         return view('dashboard.student.courses.browse', compact('courses', 'categories', 'enrolledIds', 'search', 'categoryId'));
     }
 
-    public function enrol(Course $course): RedirectResponse
-    {
-        abort_unless($course->status === 'published', 404);
-
-        $exists = Enrolment::query()
-            ->where('course_id', $course->id)
-            ->where('student_id', auth()->id())
-            ->exists();
-
-        if ($exists) {
-            return redirect()
-                ->route('dashboard.student.courses.show', $course)
-                ->with('success', 'You are already enrolled in this course.');
-        }
-
-        Enrolment::query()->create([
-            'course_id' => $course->id,
-            'student_id' => auth()->id(),
-            'status' => 'active',
-            'amount_paid' => $course->price,
-            'progress' => 0,
-            'enrolled_at' => now(),
-        ]);
-
-        $course->increment('enrolments_count');
-
-        return redirect()
-            ->route('dashboard.student.courses.show', $course)
-            ->with('success', 'Successfully enrolled. Start learning now!');
-    }
-
     public function show(Course $course): View
     {
         $enrolment = $this->requireEnrolment($course);
 
-        $course->load(['instructor', 'category', 'chapters.contents', 'assessments' => fn ($q) => $q->where('status', 'published')]);
+        $course->load([
+            'instructor',
+            'category',
+            'chapters.contents',
+            'chapters.assessments' => fn ($q) => $q->where('status', 'published'),
+            'assessments' => fn ($q) => $q->where('status', 'published'),
+        ]);
+
+        $completedIds = $enrolment->completions()->pluck('chapter_content_id');
 
         $submissions = AssessmentSubmission::query()
             ->where('student_id', auth()->id())
@@ -115,25 +95,85 @@ class CourseController extends Controller
             ->get()
             ->keyBy('assessment_id');
 
-        return view('dashboard.student.courses.show', compact('course', 'enrolment', 'submissions'));
+        // Assessments that are not tied to a chapter are listed separately.
+        $looseAssessments = $course->assessments->whereNull('chapter_id');
+
+        $nextLesson = $course->chapters
+            ->flatMap(fn ($chapter) => $chapter->contents)
+            ->first(fn ($content) => ! $completedIds->contains($content->id));
+
+        return view('dashboard.student.courses.show', compact(
+            'course',
+            'enrolment',
+            'submissions',
+            'completedIds',
+            'looseAssessments',
+            'nextLesson'
+        ));
     }
 
-    public function updateProgress(Request $request, Course $course): RedirectResponse
+    public function lesson(Course $course, ChapterContent $content): View
     {
         $enrolment = $this->requireEnrolment($course);
+        $this->ensureContentBelongsToCourse($course, $content);
 
-        $validated = $request->validate([
-            'progress' => ['required', 'integer', 'min:0', 'max:100'],
+        $course->load('chapters.contents');
+        $lessons = $course->chapters->flatMap(fn ($chapter) => $chapter->contents)->values();
+        $position = $lessons->search(fn ($item) => $item->id === $content->id);
+
+        return view('dashboard.student.courses.lesson', [
+            'course' => $course,
+            'content' => $content,
+            'enrolment' => $enrolment,
+            'chapter' => $content->chapter,
+            'isCompleted' => $enrolment->hasCompleted($content),
+            'previous' => $position > 0 ? $lessons[$position - 1] : null,
+            'next' => $position < $lessons->count() - 1 ? $lessons[$position + 1] : null,
+            'safeBody' => $content->type === 'text' ? HtmlSanitizer::clean($content->body) : null,
+            'position' => $position + 1,
+            'totalLessons' => $lessons->count(),
         ]);
+    }
 
-        $progress = (int) $validated['progress'];
-        $enrolment->update([
-            'progress' => $progress,
-            'status' => $progress >= 100 ? 'completed' : 'active',
-            'completed_at' => $progress >= 100 ? now() : null,
-        ]);
+    public function completeLesson(Request $request, Course $course, ChapterContent $content): RedirectResponse
+    {
+        $enrolment = $this->requireEnrolment($course);
+        $this->ensureContentBelongsToCourse($course, $content);
 
-        return back()->with('success', 'Progress updated.');
+        if ($request->boolean('undo')) {
+            $enrolment->completions()->where('chapter_content_id', $content->id)->delete();
+            $message = 'Lesson marked as not completed.';
+        } else {
+            ContentCompletion::query()->firstOrCreate(
+                ['enrolment_id' => $enrolment->id, 'chapter_content_id' => $content->id],
+                ['completed_at' => now()]
+            );
+            $message = 'Lesson completed. Great job!';
+        }
+
+        $enrolment->recalculateProgress();
+
+        // Move on to the next lesson when requested and available.
+        if (! $request->boolean('undo') && $request->boolean('go_next')) {
+            $lessons = $course->chapters()->with('contents')->get()->flatMap(fn ($chapter) => $chapter->contents)->values();
+            $position = $lessons->search(fn ($item) => $item->id === $content->id);
+            $next = $lessons[$position + 1] ?? null;
+
+            if ($next) {
+                return redirect()
+                    ->route('dashboard.student.courses.lesson', [$course, $next])
+                    ->with('success', $message);
+            }
+
+            return redirect()->route('dashboard.student.courses.show', $course)->with('success', $message);
+        }
+
+        return back()->with('success', $message);
+    }
+
+    private function ensureContentBelongsToCourse(Course $course, ChapterContent $content): void
+    {
+        abort_unless($content->chapter && $content->chapter->course_id === $course->id, 404);
     }
 
     private function requireEnrolment(Course $course): Enrolment

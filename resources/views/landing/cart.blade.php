@@ -4,34 +4,6 @@
 
 @section('content')
 
-@php
-$cartCourses = [
-    [
-        'slug' => 'ui-ux-design-fundamentals',
-        'title' => 'UI/UX Design Fundamentals',
-        'category' => 'Design & Creative',
-        'instructor' => 'Sarah Chen',
-        'image' => 'photo-1561070791-2526d30994b5',
-        'price' => 49,
-        'lessons' => 24,
-        'hours' => 18,
-    ],
-    [
-        'slug' => 'full-stack-web-development',
-        'title' => 'Full Stack Web Development',
-        'category' => 'Tech & Programming',
-        'instructor' => 'John Doe',
-        'image' => 'photo-1498050108023-c5249f4df085',
-        'price' => 79,
-        'lessons' => 36,
-        'hours' => 42,
-    ],
-];
-$subtotal = array_sum(array_column($cartCourses, 'price'));
-$discount = 10;
-$total = $subtotal - $discount;
-@endphp
-
 <section class="checkout-page pt-20 lg:pt-24 pb-16 lg:pb-20 bg-white">
     <div class="page-container max-w-6xl">
         {{-- Step indicator --}}
@@ -51,32 +23,46 @@ $total = $subtotal - $discount;
             </div>
         </div>
 
-        <div class="grid lg:grid-cols-5 gap-8 lg:gap-12 mt-10 lg:mt-12 items-start">
+        <div class="mt-8">@include('partials.dashboard.alerts')</div>
+
+        @if($courses->isEmpty())
+        <div class="text-center py-16">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-brand-light flex items-center justify-center">
+                <svg class="w-8 h-8 text-brand-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
+            </div>
+            <h1 class="font-display text-2xl font-bold text-gray-900">Your cart is empty</h1>
+            <p class="mt-2 text-sm text-gray-500">Browse our catalogue and add the courses you want to learn.</p>
+            <a href="{{ route('courses') }}" class="checkout-cta mt-6 !w-auto inline-flex px-8">Browse courses</a>
+        </div>
+        @else
+        <div class="grid lg:grid-cols-5 gap-8 lg:gap-12 mt-6 items-start">
             {{-- Cart items --}}
             <div class="lg:col-span-3 reveal">
                 <div class="mb-8">
                     <h1 class="font-display text-2xl sm:text-[1.75rem] font-bold text-gray-900 tracking-tight">Shopping cart</h1>
-                    <p class="mt-1.5 text-sm text-gray-500">{{ count($cartCourses) }} courses selected</p>
+                    <p class="mt-1.5 text-sm text-gray-500">{{ $courses->count() }} {{ \Illuminate\Support\Str::plural('course', $courses->count()) }} selected</p>
                 </div>
 
                 <div class="checkout-panel cart-course-list">
-                    @foreach($cartCourses as $course)
+                    @foreach($courses as $course)
                     <article class="cart-course-row">
-                        <a href="{{ route('courses.show', $course['slug']) }}" class="cart-course-link shrink-0">
-                            <img src="https://images.unsplash.com/{{ $course['image'] }}?w=160&h=100&fit=crop"
-                                alt="{{ $course['title'] }}"
-                                class="cart-course-thumb">
+                        <a href="{{ route('courses.show', $course->slug) }}" class="cart-course-link shrink-0">
+                            <img src="{{ $course->thumbnail_url }}" alt="{{ $course->title }}" class="cart-course-thumb">
                         </a>
-                        <a href="{{ route('courses.show', $course['slug']) }}" class="cart-course-link min-w-0 flex-1 group">
-                            <p class="text-[11px] font-medium uppercase tracking-wide text-brand-dark">{{ $course['category'] }}</p>
-                            <h3 class="mt-0.5 text-sm sm:text-base font-medium text-gray-900 leading-snug group-hover:text-brand-dark transition-colors">{{ $course['title'] }}</h3>
-                            <p class="mt-1 text-xs text-gray-400">{{ $course['instructor'] }} · {{ $course['lessons'] }} lessons · {{ $course['hours'] }}h</p>
+                        <a href="{{ route('courses.show', $course->slug) }}" class="cart-course-link min-w-0 flex-1 group">
+                            <p class="text-[11px] font-medium uppercase tracking-wide text-brand-dark">{{ $course->category?->name ?? 'General' }}</p>
+                            <h3 class="mt-0.5 text-sm sm:text-base font-medium text-gray-900 leading-snug group-hover:text-brand-dark transition-colors">{{ $course->title }}</h3>
+                            <p class="mt-1 text-xs text-gray-400">{{ $course->instructor?->name }} · {{ $course->contents_count }} lessons</p>
                         </a>
                         <div class="flex flex-col items-end justify-between shrink-0 gap-3">
-                            <button type="button" class="cart-remove-btn" aria-label="Remove {{ $course['title'] }}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
-                            </button>
-                            <span class="text-sm font-semibold text-gray-900 tabular-nums">${{ $course['price'] }}</span>
+                            <form action="{{ route('cart.remove', $course->slug) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="cart-remove-btn" aria-label="Remove {{ $course->title }}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </form>
+                            <span class="text-sm font-semibold text-gray-900 tabular-nums">{{ $course->price_label }}</span>
                         </div>
                     </article>
                     @endforeach
@@ -94,32 +80,15 @@ $total = $subtotal - $discount;
                     <h2 class="checkout-order-title">Order summary</h2>
 
                     <div class="checkout-order-lines pt-2">
-                        @foreach($cartCourses as $course)
+                        @foreach($courses as $course)
                         <div class="checkout-order-line">
-                            <a href="{{ route('courses.show', $course['slug']) }}" class="truncate pr-3 hover:text-brand-dark transition-colors">{{ $course['title'] }}</a>
-                            <span class="tabular-nums shrink-0">${{ $course['price'] }}</span>
+                            <a href="{{ route('courses.show', $course->slug) }}" class="truncate pr-3 hover:text-brand-dark transition-colors">{{ $course->title }}</a>
+                            <span class="tabular-nums shrink-0">{{ $course->price_label }}</span>
                         </div>
                         @endforeach
                     </div>
 
-                    <div class="checkout-order-promo">
-                        <label for="promo-code" class="checkout-label mb-2">Promo code</label>
-                        <div class="flex gap-2">
-                            <input id="promo-code" type="text" value="SKILLFORGE10" class="checkout-input flex-1 text-sm" readonly>
-                            <span class="checkout-promo-badge">Applied</span>
-                        </div>
-                        <p class="mt-2 text-xs checkout-discount">− ${{ $discount }} discount applied</p>
-                    </div>
-
                     <div class="checkout-order-lines">
-                        <div class="checkout-order-line">
-                            <span>Subtotal</span>
-                            <span class="tabular-nums">${{ $subtotal }}</span>
-                        </div>
-                        <div class="checkout-order-line">
-                            <span>Discount</span>
-                            <span class="tabular-nums checkout-discount">− ${{ $discount }}</span>
-                        </div>
                         <div class="checkout-order-line">
                             <span>Platform fee</span>
                             <span class="checkout-discount font-medium">Free</span>
@@ -128,10 +97,10 @@ $total = $subtotal - $discount;
 
                     <div class="checkout-order-total">
                         <span>Total</span>
-                        <span class="tabular-nums">${{ $total }}</span>
+                        <span class="tabular-nums">${{ number_format($total, 2) }}</span>
                     </div>
 
-                    <a href="{{ route('checkout') }}" class="checkout-cta mt-6">
+                    <a href="{{ route('checkout') }}" id="proceed-to-payment" class="checkout-cta mt-6">
                         Proceed to payment
                     </a>
 
@@ -142,6 +111,7 @@ $total = $subtotal - $discount;
                 </div>
             </aside>
         </div>
+        @endif
     </div>
 </section>
 

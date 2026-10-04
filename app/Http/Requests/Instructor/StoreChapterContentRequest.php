@@ -17,9 +17,11 @@ class StoreChapterContentRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'type' => ['required', 'in:video,text,pdf'],
-            'body' => ['nullable', 'string', 'max:10000'],
-            'url' => ['nullable', 'string', 'max:500'],
+            'body' => ['nullable', 'string', 'max:50000'],
+            'url' => ['nullable', 'string', 'max:500', 'url'],
+            'file' => ['nullable', 'file', 'max:204800'],
             'duration_minutes' => ['nullable', 'integer', 'min:0', 'max:600'],
+            'is_free_preview' => ['nullable', 'boolean'],
         ];
     }
 
@@ -27,13 +29,36 @@ class StoreChapterContentRequest extends FormRequest
     {
         $validator->after(function (Validator $validator) {
             $type = $this->input('type');
+            $file = $this->file('file');
+            $isUpdate = $this->route('content') !== null;
+            $existing = $this->route('content');
 
-            if (in_array($type, ['video', 'pdf'], true) && blank($this->input('url'))) {
-                $validator->errors()->add('url', 'URL is required for video and PDF content.');
+            if ($type === 'video') {
+                $hasExisting = $isUpdate && ($existing->file_path || $existing->url);
+
+                if (blank($this->input('url')) && ! $file && ! $hasExisting) {
+                    $validator->errors()->add('url', 'Upload a video file or paste a YouTube, Vimeo or direct video URL.');
+                }
+
+                if ($file && ! in_array(strtolower($file->getClientOriginalExtension()), ['mp4', 'webm', 'ogg', 'mov'], true)) {
+                    $validator->errors()->add('file', 'Video must be an MP4, WebM, OGG or MOV file.');
+                }
             }
 
-            if ($type === 'text' && blank($this->input('body'))) {
-                $validator->errors()->add('body', 'Content body is required for text lessons.');
+            if ($type === 'pdf') {
+                $hasExisting = $isUpdate && ($existing->file_path || $existing->url);
+
+                if ($file && strtolower($file->getClientOriginalExtension()) !== 'pdf') {
+                    $validator->errors()->add('file', 'Document must be a PDF file.');
+                }
+
+                if (! $file && blank($this->input('url')) && ! $hasExisting) {
+                    $validator->errors()->add('file', 'Upload a PDF file or provide a PDF URL.');
+                }
+            }
+
+            if ($type === 'text' && blank(trim(strip_tags((string) $this->input('body'), '<img><table>')))) {
+                $validator->errors()->add('body', 'Lesson content is required for blog / text lessons.');
             }
         });
     }
@@ -44,6 +69,8 @@ class StoreChapterContentRequest extends FormRequest
             'title.required' => 'Content title is required.',
             'type.required' => 'Content type is required.',
             'type.in' => 'Content type must be video, text, or pdf.',
+            'url.url' => 'Please enter a valid URL (including https://).',
+            'file.max' => 'The uploaded file may not be larger than 200 MB.',
         ];
     }
 }

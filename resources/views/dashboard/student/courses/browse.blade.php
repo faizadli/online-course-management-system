@@ -35,7 +35,7 @@
                 <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ $course->category?->name ?? 'Course' }}</p>
                 <h2 class="text-base font-bold text-gray-900 mt-1">{{ $course->title }}</h2>
             </div>
-            <span class="text-sm font-bold text-brand-dark">${{ number_format($course->price, 0) }}</span>
+            <span class="text-sm font-bold text-brand-dark">{{ $course->price_label }}</span>
         </div>
         <p class="text-sm text-gray-500 line-clamp-2 mb-4">{{ $course->short_description ?: 'No description available.' }}</p>
         <div class="flex items-center justify-between text-xs text-gray-400 mb-4">
@@ -47,10 +47,10 @@
             Continue Learning
         </a>
         @else
-        <form action="{{ route('dashboard.student.courses.enrol', $course) }}" method="post">
+        <form action="{{ route('cart.buy', $course->slug) }}" method="post">
             @csrf
             <button type="submit" class="w-full py-2.5 bg-brand-dark text-white text-sm font-semibold rounded-lg hover:bg-brand transition-colors">
-                Enrol Now
+                Enrol Now · {{ $course->price_label }}
             </button>
         </form>
         @endif

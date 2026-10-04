@@ -1,5 +1,6 @@
 import './bootstrap';
 import { initFormValidation } from './validation';
+import { initAssessmentPage, initBuilder } from './builder';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Landing navbar scroll effect (hero home page only)
@@ -78,6 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Checkout payment method accordion
     initCheckoutPage();
 
+    // Course builder & assessment taking
+    initBuilder();
+    initAssessmentPage();
+
     // Instructor courses search & pagination
     initInstructorCourses();
 
@@ -95,6 +100,8 @@ function initCheckoutPage() {
     const paymentMethods = document.getElementById('payment-methods');
     if (!paymentMethods) return;
 
+    const methodInput = document.getElementById('payment-method-input');
+
     paymentMethods.addEventListener('click', (e) => {
         const header = e.target.closest('.payment-method-header');
         if (!header) return;
@@ -103,6 +110,30 @@ function initCheckoutPage() {
         paymentMethods.querySelectorAll('.payment-method').forEach((el) => {
             el.classList.toggle('is-open', el === method);
         });
+        if (methodInput && method.dataset.method) {
+            methodInput.value = method.dataset.method;
+        }
+    });
+
+    // Card number & expiry input masks
+    const cardNumber = document.getElementById('card-number');
+    cardNumber?.addEventListener('input', () => {
+        const digits = cardNumber.value.replace(/\D/g, '').slice(0, 19);
+        cardNumber.value = digits.replace(/(.{4})/g, '$1 ').trim();
+    });
+
+    const cardExpiry = document.getElementById('card-expiry');
+    cardExpiry?.addEventListener('input', () => {
+        const digits = cardExpiry.value.replace(/\D/g, '').slice(0, 4);
+        cardExpiry.value = digits.length > 2 ? `${digits.slice(0, 2)} / ${digits.slice(2)}` : digits;
+    });
+
+    document.getElementById('checkout-form')?.addEventListener('submit', (e) => {
+        const button = document.getElementById('pay-button');
+        if (button) {
+            button.disabled = true;
+            button.textContent = 'Processing payment…';
+        }
     });
 }
 

@@ -21,6 +21,11 @@ class StoreQuestionRequest extends FormRequest
             'options' => ['nullable', 'array'],
             'options.*.text' => ['nullable', 'string', 'max:500'],
             'correct_option' => ['nullable', 'integer', 'min:0', 'max:3'],
+            'explanation' => ['nullable', 'string', 'max:500'],
+            'rubric' => ['nullable', 'array', 'max:8'],
+            'rubric.*.criteria' => ['nullable', 'string', 'max:100'],
+            'rubric.*.description' => ['nullable', 'string', 'max:300'],
+            'rubric.*.weight' => ['nullable', 'integer', 'min:0', 'max:100'],
         ];
     }
 
@@ -42,8 +47,17 @@ class StoreQuestionRequest extends FormRequest
                 }
             }
 
-            if ($assessment && $assessment->type === 'essay' && blank($this->input('model_answer'))) {
-                $validator->errors()->add('model_answer', 'Model answer is recommended for essay grading.');
+            if ($assessment && $assessment->type === 'essay') {
+                $rubricRows = collect($this->input('rubric', []))
+                    ->filter(fn ($row) => filled($row['criteria'] ?? null));
+
+                if ($rubricRows->isEmpty() && blank($this->input('model_answer'))) {
+                    $validator->errors()->add('model_answer', 'Provide a model answer or at least one rubric criterion so the AI can score the response.');
+                }
+
+                if ($rubricRows->isNotEmpty() && $rubricRows->sum(fn ($row) => (int) ($row['weight'] ?? 0)) !== 100) {
+                    $validator->errors()->add('rubric', 'Rubric criteria weights must add up to exactly 100%.');
+                }
             }
         });
     }

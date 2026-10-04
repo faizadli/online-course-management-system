@@ -6,7 +6,7 @@
 
 <div class="mb-8">
     <h1 class="text-2xl sm:text-3xl font-bold">Platform Reports</h1>
-    <p class="text-gray-500 mt-1">Platform-wide statistics covering users, courses, and enrolments.</p>
+    <p class="text-gray-500 mt-1">Platform-wide statistics covering users, courses, enrolments and payments.</p>
 </div>
 
 <div class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
@@ -14,7 +14,7 @@
         ['label' => 'Total Users', 'value' => number_format($stats['total_users']), 'sub' => $stats['new_users_this_month'].' new this month'],
         ['label' => 'Published Courses', 'value' => number_format($stats['published_courses']), 'sub' => $stats['draft_courses'].' drafts'],
         ['label' => 'Total Enrolments', 'value' => number_format($stats['total_enrolments']), 'sub' => 'Across all courses'],
-        ['label' => 'Course Revenue', 'value' => '$'.number_format($stats['total_revenue'], 0), 'sub' => 'Published course prices'],
+        ['label' => 'Total Revenue', 'value' => '$'.number_format($stats['total_revenue'], 2), 'sub' => $stats['total_payments'].' successful payments'],
     ] as $stat)
     <div class="dashboard-stat-card">
         <p class="text-3xl font-bold">{{ $stat['value'] }}</p>
@@ -84,6 +84,30 @@
                         <td class="font-semibold">${{ number_format($course->price, 0) }}</td>
                     </tr>
                     @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 shadow-sm">
+        <h2 class="text-lg font-bold mb-6">Recent Payments</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full dashboard-table">
+                <thead>
+                    <tr><th>Reference</th><th>Student</th><th>Course</th><th>Method</th><th>Amount</th><th>Paid at</th></tr>
+                </thead>
+                <tbody>
+                    @forelse($recentPayments as $payment)
+                    <tr>
+                        <td class="font-mono text-xs text-gray-500">{{ $payment->reference }}</td>
+                        <td class="text-gray-700">{{ $payment->enrolment?->student?->name }}</td>
+                        <td class="font-semibold text-gray-900">{{ $payment->enrolment?->course?->title }}</td>
+                        <td class="text-gray-500">{{ $payment->method === 'card' ? ($payment->card_brand.' •••• '.$payment->card_last4) : ucfirst($payment->method) }}</td>
+                        <td class="font-semibold">${{ number_format($payment->amount, 2) }}</td>
+                        <td class="text-gray-500">{{ $payment->paid_at?->format('M d, Y H:i') }}</td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="6" class="text-center text-gray-500 py-6">No payments yet.</td></tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

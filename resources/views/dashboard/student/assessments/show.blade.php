@@ -9,7 +9,9 @@
 <div class="mb-8">
     <a href="{{ route('dashboard.student.assessments.index') }}" class="text-sm font-medium text-gray-500 hover:text-brand-dark">← Back to Assessments</a>
     <h1 class="text-2xl sm:text-3xl font-bold mt-2">{{ $assessment->title }}</h1>
-    <p class="text-gray-500 mt-1">{{ $assessment->course?->title }} · {{ strtoupper($assessment->type) }} · Pass score {{ $assessment->pass_score }}%</p>
+    <p class="text-gray-500 mt-1">{{ $assessment->course?->title }} · {{ $assessment->type === 'mcq' ? 'MCQ' : 'Essay / Short answer' }} · Pass score {{ $assessment->pass_score }}%
+        @if($assessment->time_limit_minutes) · Time limit {{ $assessment->time_limit_minutes }} min @endif
+    </p>
 </div>
 
 @if($submission)
@@ -21,11 +23,11 @@
             {{ str_replace('_', ' ', ucfirst($submission->status)) }}
         </span>
         @if($submission->score !== null)
-        <span class="text-2xl font-bold text-brand-dark">{{ $submission->score }}%</span>
+        <span class="text-2xl font-bold text-brand-dark">{{ rtrim(rtrim(number_format((float) $submission->score, 1), '0'), '.') }}%</span>
         @endif
     </div>
     @if($submission->feedback)
-    <p class="text-sm text-gray-600 leading-relaxed mb-4">{{ $submission->feedback }}</p>
+    <p class="text-sm text-gray-600 leading-relaxed mb-4">{{ \Illuminate\Support\Str::limit($submission->feedback, 300) }}</p>
     @endif
     <a href="{{ route('dashboard.student.feedback.show', $submission) }}" class="inline-flex px-5 py-2.5 bg-brand-dark text-white text-sm font-semibold rounded-lg hover:bg-brand transition-colors">
         View full feedback
@@ -33,17 +35,31 @@
 </div>
 @else
 <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm max-w-3xl">
+    @if($remainingSeconds !== null)
+    <div id="assessment-timer" data-remaining="{{ $remainingSeconds }}" class="sticky top-16 z-20 -mx-1 mb-5 flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-brand-light border border-brand/30 text-sm">
+        <span class="font-semibold text-gray-700">⏱ Time remaining</span>
+        <span id="assessment-timer-value" class="font-mono text-lg font-bold text-gray-900">--:--</span>
+    </div>
+    @endif
+
     @if($assessment->description)
     <p class="text-sm text-gray-600 mb-6">{{ $assessment->description }}</p>
     @endif
 
-    <form action="{{ route('dashboard.student.assessments.submit', $assessment) }}" method="post" class="space-y-6" data-validate="student-assessment" novalidate>
+    @if($assessment->type === 'essay')
+    <div class="mb-6 p-4 rounded-xl bg-gray-50 border border-gray-100 text-sm text-gray-600">
+        <p class="font-semibold text-gray-800 mb-1">🤖 AI-assisted scoring</p>
+        Your written answers are evaluated by Google Gemini against the instructor's rubric, and you will receive a score with written feedback right after submitting.
+    </div>
+    @endif
+
+    <form action="{{ route('dashboard.student.assessments.submit', $assessment) }}" method="post" class="space-y-6" id="assessment-form" novalidate>
         @csrf
 
         @foreach($assessment->questions as $index => $question)
         <div class="form-field p-4 rounded-xl border border-gray-100">
-            <p class="text-xs font-semibold text-gray-400 mb-2">Question {{ $index + 1 }} · {{ $question->points }} pts</p>
-            <p class="text-sm font-semibold text-gray-900 mb-4">{{ $question->question }}</p>
+            <p class="text-xs font-semibold text-gray-400 mb-2">Question {{ $index + 1 }} · {{ $question->points }} {{ \Illuminate\Support\Str::plural('pt', $question->points) }}</p>
+            <p class="text-sm font-semibold text-gray-900 mb-4 whitespace-pre-line">{{ $question->question }}</p>
 
             @if($assessment->type === 'mcq')
                 <div class="space-y-2">
@@ -55,7 +71,17 @@
                     @endforeach
                 </div>
             @else
-                <textarea name="answers[{{ $question->id }}]" rows="5" class="dashboard-input" placeholder="Write your answer here..."></textarea>
+                @php $rubric = $question->effectiveRubric(); @endphp
+                <textarea name="answers[{{ $question->id }}]" rows="7" class="dashboard-input" placeholder="Write your answer here..."></textarea>
+                <p class="mt-1 text-xs text-gray-400"><span data-word-count>0</span> words</p>
+                <details class="mt-3 text-xs text-gray-500">
+                    <summary class="cursor-pointer font-semibold text-gray-600">How will this be graded?</summary>
+                    <ul class="mt-2 space-y-1">
+                        @foreach($rubric as $row)
+                        <li>• <strong>{{ $row['criteria'] }}</strong> ({{ $row['weight'] }}%) — {{ $row['description'] }}</li>
+                        @endforeach
+                    </ul>
+                </details>
             @endif
         </div>
         @endforeach
@@ -63,11 +89,20 @@
         @include('partials.field-error', ['name' => 'answers'])
 
         <div class="flex justify-end">
-            <button type="submit" class="px-6 py-2.5 bg-brand-dark text-white text-sm font-semibold rounded-lg hover:bg-brand transition-colors">
+            <button type="submit" id="submit-assessment" class="px-6 py-2.5 bg-brand-dark text-white text-sm font-semibold rounded-lg hover:bg-brand transition-colors">
                 Submit Assessment
             </button>
         </div>
     </form>
+</div>
+
+{{-- Scoring overlay (shown while the AI evaluates the answers) --}}
+<div id="scoring-overlay" class="hidden fixed inset-0 z-[100] bg-white/90 backdrop-blur-sm flex items-center justify-center">
+    <div class="text-center px-6">
+        <div class="mx-auto w-12 h-12 rounded-full border-4 border-brand-light border-t-brand-dark animate-spin"></div>
+        <p class="mt-5 font-semibold text-gray-900">{{ $assessment->type === 'essay' ? 'AI is evaluating your answers…' : 'Scoring your answers…' }}</p>
+        <p class="mt-1 text-sm text-gray-500">This usually takes a few seconds.</p>
+    </div>
 </div>
 @endif
 

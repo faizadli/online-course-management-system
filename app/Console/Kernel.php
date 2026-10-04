@@ -11,7 +11,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(\Illuminate\Console\Scheduling\Schedule $schedule): void
     {
-        //
+        // Daily automated database backup at 02:00 (run `php artisan schedule:work` or add a cron entry).
+        $schedule->command('db:backup --keep=14')->dailyAt('02:00');
     }
 
     /**

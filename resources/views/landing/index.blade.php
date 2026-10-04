@@ -12,7 +12,7 @@
         <div class="hero-copy relative z-10 max-w-2xl">
             <div class="hero-line hero-line-1 inline-flex items-center gap-2 rounded-full border border-gray-900/10 bg-white/75 px-3 py-1.5 text-xs font-medium text-gray-800 shadow-sm backdrop-blur-sm">
                 <svg class="h-4 w-4 text-brand-dark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 2.2 6.6H21l-5.5 4 2.1 6.6-5.6-4.1-5.6 4.1 2.1-6.6L3 8.6h6.8L12 2Z"/></svg>
-                <span>4.9 on Trustpilot</span>
+                <span>AI-powered essay scoring with Google Gemini</span>
             </div>
 
             <h1 class="mt-6 max-w-2xl font-display text-[2.65rem] font-extrabold leading-[0.95] tracking-[-0.06em] text-gray-900 sm:text-5xl lg:text-[3.6rem] xl:text-[4.15rem]">
@@ -32,16 +32,16 @@
 
             <div class="hero-line hero-line-4 mt-10 flex items-center gap-7 border-t border-gray-900/10 pt-5 sm:gap-10">
                 <div>
-                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-900">100+</p>
+                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-900">{{ number_format($stats['courses']) }}</p>
                     <p class="mt-1 text-[0.65rem] uppercase tracking-wider text-gray-500">Expert courses</p>
                 </div>
                 <div>
-                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-900">12k+</p>
+                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-900">{{ number_format($stats['learners']) }}</p>
                     <p class="mt-1 text-[0.65rem] uppercase tracking-wider text-gray-500">Active learners</p>
                 </div>
                 <div>
-                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-900">4.9</p>
-                    <p class="mt-1 text-[0.65rem] uppercase tracking-wider text-gray-500">Average rating</p>
+                    <p class="font-display text-2xl font-extrabold tracking-tight text-gray-900">{{ number_format($stats['instructors']) }}</p>
+                    <p class="mt-1 text-[0.65rem] uppercase tracking-wider text-gray-500">Instructors</p>
                 </div>
             </div>
         </div>
@@ -77,8 +77,8 @@
             </div>
 
             <div class="hero-float hero-float-left absolute bottom-12 left-0 rounded-2xl bg-brand-dark px-4 py-3 text-white shadow-xl">
-                <p class="font-display text-2xl font-extrabold leading-none">50+</p>
-                <p class="mt-1 text-[0.65rem] font-semibold uppercase tracking-wider text-white/80">Learning paths</p>
+                <p class="font-display text-2xl font-extrabold leading-none">{{ number_format($stats['categories']) }}</p>
+                <p class="mt-1 text-[0.65rem] font-semibold uppercase tracking-wider text-white/80">Categories</p>
             </div>
 
             <div class="hero-float hero-float-right hero-float-delay-1 absolute bottom-1/3 right-[-0.25rem] rounded-2xl bg-brand-dark px-4 py-3 text-white shadow-xl">
@@ -90,7 +90,7 @@
 </section>
 
 @include('partials.sections.categories', ['bgClass' => 'bg-brand-light'])
-@include('partials.sections.courses-grid')
+@include('partials.sections.courses-grid', ['courses' => $featuredCourses])
 @include('partials.sections.testimonials')
 
 @endsection

@@ -10,6 +10,7 @@ use App\Models\Course;
 use App\Support\AdminPagination;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -52,12 +53,14 @@ class CourseController extends Controller
     public function store(StoreCourseRequest $request): RedirectResponse
     {
         $validated = $request->validated();
+        $thumbnail = $request->hasFile('thumbnail') ? $request->file('thumbnail')->store('thumbnails', 'public') : null;
 
         $course = Course::query()->create([
             'title' => $validated['title'],
             'slug' => $this->uniqueSlug($validated['title']),
             'category_id' => $validated['category_id'] ?? null,
             'instructor_id' => auth()->id(),
+            'thumbnail' => $thumbnail,
             'status' => 'draft',
             'price' => $validated['price'] ?? 0,
             'level' => $validated['level'] ?? 'Beginner',
@@ -76,24 +79,41 @@ class CourseController extends Controller
         $this->authorizeCourse($course);
 
         $validated = $request->validated();
+        $status = $validated['status'] ?? $course->status;
 
-        $course->update([
+        if ($status === 'published' && $course->status !== 'published') {
+            $missing = $this->publishBlockers($course, $validated);
+
+            if ($missing !== []) {
+                return back()->withErrors(['course' => 'Cannot publish yet. Missing: '.implode(', ', $missing).'.'])->withInput();
+            }
+        }
+
+        $data = [
             'title' => $validated['title'],
             'slug' => $course->title !== $validated['title']
                 ? $this->uniqueSlug($validated['title'], $course->id)
                 : $course->slug,
             'category_id' => $validated['category_id'] ?? null,
-            'status' => $validated['status'],
+            'status' => $status,
             'price' => $validated['price'] ?? 0,
             'level' => $validated['level'] ?? 'Beginner',
             'language' => $validated['language'] ?? 'English',
             'short_description' => $validated['short_description'] ?? null,
             'description' => $validated['description'] ?? null,
-        ]);
+        ];
+
+        if ($request->hasFile('thumbnail')) {
+            if ($course->thumbnail) {
+                Storage::disk('public')->delete($course->thumbnail);
+            }
+            $data['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public');
+        }
+
+        $course->update($data);
 
         return back()->with('success', 'Course updated successfully.');
     }
-
     public function destroy(Course $course): RedirectResponse
     {
         $this->authorizeCourse($course);
@@ -117,9 +137,12 @@ class CourseController extends Controller
             $course->update(['status' => 'draft']);
             $message = 'Course unpublished and set to draft.';
         } else {
-            if ($course->chapters()->count() === 0) {
-                return back()->withErrors(['course' => 'Add at least one chapter before publishing.']);
+            $missing = $course->missingPublishRequirements();
+
+            if ($missing !== []) {
+                return back()->withErrors(['course' => 'Cannot publish yet. Missing: '.implode(', ', $missing).'.']);
             }
+
             $course->update(['status' => 'published']);
             $message = 'Course published successfully.';
         }
@@ -127,6 +150,33 @@ class CourseController extends Controller
         return back()->with('success', $message);
     }
 
+    public function archive(Course $course): RedirectResponse
+    {
+        $this->authorizeCourse($course);
+
+        if ($course->status === 'archived') {
+            $course->update(['status' => 'draft']);
+
+            return back()->with('success', 'Course restored to draft.');
+        }
+
+        $course->update(['status' => 'archived']);
+
+        return back()->with('success', 'Course archived. It is no longer listed in the catalogue.');
+    }
+
+    /** @return array<int, string> */
+    private function publishBlockers(Course $course, array $incoming): array
+    {
+        $missing = $course->missingPublishRequirements();
+
+        // The incoming form may fill in title / description in the same request.
+        if (filled($incoming['description'] ?? null) || filled($incoming['short_description'] ?? null)) {
+            $missing = array_values(array_diff($missing, ['Description']));
+        }
+
+        return $missing;
+    }
     private function authorizeCourse(Course $course): void
     {
         abort_unless($course->instructor_id === auth()->id(), 403);
