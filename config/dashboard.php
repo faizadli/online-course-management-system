@@ -8,7 +8,7 @@ return [
             'settings_route' => 'dashboard.student.settings.index',
             'user' => [
                 'name' => 'Ahmad Rizki',
-                'email' => 'ahmad@skillforge.com',
+                'email' => 'ahmad@example.com',
                 'avatar' => 'photo-1507003211169-0a1dd7228f2d',
             ],
             'search_placeholder' => 'Search courses, lessons...',
@@ -26,7 +26,7 @@ return [
             'settings_route' => 'dashboard.instructor.settings.index',
             'user' => [
                 'name' => 'Sarah Chen',
-                'email' => 'sarah@skillforge.com',
+                'email' => 'sarah@example.com',
                 'avatar' => 'photo-1494790108377-be9c29b29330',
             ],
             'search_placeholder' => 'Search courses, students...',
@@ -45,7 +45,7 @@ return [
             'settings_route' => 'dashboard.admin.settings.index',
             'user' => [
                 'name' => 'Admin User',
-                'email' => 'admin@skillforge.com',
+                'email' => 'admin@example.com',
                 'avatar' => 'photo-1472099645785-5658abf4ff4e',
             ],
             'search_placeholder' => 'Search users, categories...',

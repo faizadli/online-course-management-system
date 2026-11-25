@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Shopping Cart — SkillForge')
+@section('title', 'Shopping Cart — OCMS')
 
 @section('content')
 

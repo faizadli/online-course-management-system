@@ -1,12 +1,12 @@
 <footer class="relative bg-gray-900 text-white overflow-hidden">
     <div class="absolute inset-0 flex items-center justify-end pointer-events-none select-none overflow-hidden">
-        <span class="font-display text-[12rem] lg:text-[20rem] font-bold text-white/[0.03] leading-none pr-8">SkillForge</span>
+        <span class="font-display text-[12rem] lg:text-[20rem] font-bold text-white/[0.03] leading-none pr-8">OCMS</span>
     </div>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid md:grid-cols-3 gap-12">
             <div>
-                <a href="{{ route('home') }}" class="font-display text-2xl font-bold">SkillForge</a>
+                <a href="{{ route('home') }}" class="font-display text-2xl font-bold">OCMS</a>
                 <p class="mt-4 text-gray-400 text-sm leading-relaxed">Helping professionals and creators build skills that move careers forward.</p>
             </div>
 
@@ -30,7 +30,7 @@
         </div>
 
         <div class="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-            <p class="text-sm text-gray-500 order-2 sm:order-1">&copy; {{ date('Y') }} SkillForge. All rights reserved.</p>
+            <p class="text-sm text-gray-500 order-2 sm:order-1">&copy; {{ date('Y') }} OCMS. All rights reserved.</p>
             <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 order-1 sm:order-2">
                 <a href="#" class="text-sm text-gray-400 hover:text-white transition-colors duration-300">Privacy Policy</a>
                 <a href="#" class="text-sm text-gray-400 hover:text-white transition-colors duration-300">Terms of Service</a>

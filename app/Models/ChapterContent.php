@@ -37,7 +37,8 @@ class ChapterContent extends Model
     public function getResourceUrlAttribute(): ?string
     {
         if ($this->file_path) {
-            return Storage::disk('public')->url($this->file_path);
+            // Relative to the current request host, so it works on any port (APP_URL may differ from `artisan serve`).
+            return asset('storage/'.ltrim($this->file_path, '/'));
         }
 
         return $this->url ?: null;

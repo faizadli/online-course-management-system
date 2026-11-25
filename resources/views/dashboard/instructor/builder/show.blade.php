@@ -1,6 +1,6 @@
 @extends('layouts.dashboard', ['role' => 'instructor'])
 
-@section('title', 'Course Builder — '.$course->title.' — SkillForge')
+@section('title', 'Course Builder — '.$course->title.' — OCMS')
 
 @section('content')
 

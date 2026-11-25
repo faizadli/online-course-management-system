@@ -1,6 +1,6 @@
 @extends('layouts.dashboard', ['role' => 'student'])
 
-@section('title', 'Feedback Detail — Student — SkillForge')
+@section('title', 'Feedback Detail — Student — OCMS')
 
 @section('content')
 

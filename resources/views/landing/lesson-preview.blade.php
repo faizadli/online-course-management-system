@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', $content->title . ' (Free preview) — SkillForge')
+@section('title', $content->title . ' (Free preview) — OCMS')
 
 @section('content')
 

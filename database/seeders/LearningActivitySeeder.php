@@ -25,19 +25,19 @@ class LearningActivitySeeder extends Seeder
     {
         // [student email, course title, lesson completion %, mcq correct answers (null = not taken), essay state (null|ai|pending), days ago]
         $activity = [
-            ['student@skillforge.com', 'UI/UX Design Fundamentals', 60, 3, 'ai', 21],
-            ['student@skillforge.com', 'Full Stack Web Development', 35, 2, null, 14],
-            ['student@skillforge.com', 'Photography for Beginners', 100, 2, 'ai', 30],
-            ['student@skillforge.com', 'Study Skills Starter Kit', 20, null, null, 5],
-            ['lisa@skillforge.com', 'UI/UX Design Fundamentals', 100, 3, 'ai', 40],
-            ['lisa@skillforge.com', 'Digital Marketing Mastery', 50, 2, 'ai', 18],
-            ['david@skillforge.com', 'Full Stack Web Development', 80, 3, 'pending', 25],
-            ['david@skillforge.com', 'Python Data Science Bootcamp', 30, 1, null, 12],
-            ['maya@skillforge.com', 'UI/UX Design Fundamentals', 40, 2, 'pending', 9],
-            ['maya@skillforge.com', 'Digital Marketing Mastery', 75, 3, 'ai', 15],
-            ['budi@skillforge.com', 'Photography for Beginners', 55, 1, null, 7],
-            ['budi@skillforge.com', 'Financial Literacy 101', 100, 2, 'ai', 28],
-            ['budi@skillforge.com', 'Graphic Design with Figma', 25, null, null, 3],
+            ['student@example.com', 'UI/UX Design Fundamentals', 60, 3, 'ai', 21],
+            ['student@example.com', 'Full Stack Web Development', 35, 2, null, 14],
+            ['student@example.com', 'Photography for Beginners', 100, 2, 'ai', 30],
+            ['student@example.com', 'Study Skills Starter Kit', 20, null, null, 5],
+            ['lisa@example.com', 'UI/UX Design Fundamentals', 100, 3, 'ai', 40],
+            ['lisa@example.com', 'Digital Marketing Mastery', 50, 2, 'ai', 18],
+            ['david@example.com', 'Full Stack Web Development', 80, 3, 'pending', 25],
+            ['david@example.com', 'Python Data Science Bootcamp', 30, 1, null, 12],
+            ['maya@example.com', 'UI/UX Design Fundamentals', 40, 2, 'pending', 9],
+            ['maya@example.com', 'Digital Marketing Mastery', 75, 3, 'ai', 15],
+            ['budi@example.com', 'Photography for Beginners', 55, 1, null, 7],
+            ['budi@example.com', 'Financial Literacy 101', 100, 2, 'ai', 28],
+            ['budi@example.com', 'Graphic Design with Figma', 25, null, null, 3],
         ];
 
         foreach ($activity as [$email, $title, $completion, $mcqCorrect, $essayState, $daysAgo]) {

@@ -1,13 +1,13 @@
 @extends('layouts.landing')
 
-@section('title', 'About — SkillForge')
+@section('title', 'About — OCMS')
 
 @section('content')
 
 @include('partials.page-header', [
-    'eyebrow' => 'About SkillForge',
+    'eyebrow' => 'About OCMS',
     'title' => 'Learn With Purpose, Grow With Confidence',
-    'description' => 'SkillForge is an online learning platform built for professionals, creators, and lifelong learners who want practical skills that translate into real-world results.',
+    'description' => 'OCMS is an online learning platform built for professionals, creators, and lifelong learners who want practical skills that translate into real-world results.',
     'bgClass' => 'bg-white',
 ])
 
@@ -21,7 +21,7 @@
                     We believe everyone deserves access to high-quality education — taught by industry practitioners, designed for real outcomes, and flexible enough to fit any schedule.
                 </p>
                 <p class="mt-4 text-gray-600 leading-relaxed">
-                    From design and development to business and personal growth, SkillForge connects learners with curated paths that match their ambitions.
+                    From design and development to business and personal growth, OCMS connects learners with curated paths that match their ambitions.
                 </p>
             </div>
             <div class="grid grid-cols-2 gap-4 reveal reveal-delay-150">

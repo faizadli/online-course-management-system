@@ -16,7 +16,7 @@ $navItems = [
     <nav class="w-full max-w-[1600px] mx-auto px-5 sm:px-8 md:px-12 lg:px-14 xl:px-16">
         <div class="flex items-center justify-between h-16 lg:h-20">
             <a href="{{ route('home') }}" class="nav-logo font-display text-xl sm:text-2xl font-bold tracking-tight">
-                SkillForge
+                OCMS
             </a>
 
             <div class="hidden lg:flex items-center gap-8">

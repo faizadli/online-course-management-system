@@ -1,6 +1,6 @@
 @extends('layouts.dashboard', ['role' => 'student'])
 
-@section('title', $assessment->title.' — Assessment — SkillForge')
+@section('title', $assessment->title.' — Assessment — OCMS')
 
 @section('content')
 

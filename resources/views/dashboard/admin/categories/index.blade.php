@@ -1,6 +1,6 @@
 @extends('layouts.dashboard', ['role' => 'admin'])
 
-@section('title', 'Categories — Admin — SkillForge')
+@section('title', 'Categories — Admin — OCMS')
 
 @section('content')
 

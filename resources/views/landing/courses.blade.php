@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Courses — SkillForge')
+@section('title', 'Courses — OCMS')
 
 @section('content')
 

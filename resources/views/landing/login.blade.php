@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Login — SkillForge')
+@section('title', 'Login — OCMS')
 
 @section('content')
 
@@ -8,7 +8,7 @@
     <div class="auth-shell">
         <div class="auth-panel auth-panel-brand">
             <div class="auth-panel-content">
-                <a href="{{ route('home') }}" class="font-display text-2xl font-bold text-white">SkillForge</a>
+                <a href="{{ route('home') }}" class="font-display text-2xl font-bold text-white">OCMS</a>
                 <h1 class="mt-10 font-display text-3xl sm:text-4xl font-bold text-white leading-tight">Welcome back</h1>
                 <p class="mt-4 text-white/80 leading-relaxed max-w-sm">
                     Sign in to continue your learning journey, track progress, and access your enrolled courses.
@@ -34,7 +34,7 @@
                 </a>
 
                 <div class="auth-form-wrap">
-                <a href="{{ route('home') }}" class="font-display text-xl font-bold text-gray-900 lg:hidden">SkillForge</a>
+                <a href="{{ route('home') }}" class="font-display text-xl font-bold text-gray-900 lg:hidden">OCMS</a>
                 <h2 class="mt-6 lg:mt-0 font-display text-2xl font-bold text-gray-900">Sign in</h2>
                 <p class="mt-2 text-sm text-gray-500">Enter your credentials to access your account.</p>
 

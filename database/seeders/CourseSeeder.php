@@ -39,7 +39,8 @@ class CourseSeeder extends Seeder
                     'price' => $data['price'],
                     'level' => $data['level'],
                     'language' => 'English',
-                    'thumbnail' => 'https://images.unsplash.com/'.$data['image'].'?w=900&h=560&fit=crop',
+                    // Bundled local image (public/images/courses/<slug>.jpg) so thumbnails never depend on external hosts.
+                    'thumbnail' => '/images/courses/'.Str::slug($data['title']).'.jpg',
                     'short_description' => $data['short'],
                     'description' => $data['description'],
                     'enrolments_count' => 0,
@@ -100,7 +101,7 @@ class CourseSeeder extends Seeder
                     [
                         'title' => 'Downloadable handout (PDF)',
                         'type' => 'pdf',
-                        'file_path' => 'documents/skillforge-sample-handout.pdf',
+                        'file_path' => 'documents/ocms-sample-handout.pdf',
                         'duration_minutes' => 5,
                     ]
                 );
@@ -186,7 +187,7 @@ class CourseSeeder extends Seeder
     /** Creates a tiny but valid PDF so the PDF viewer can be demonstrated offline. */
     private function ensureSamplePdf(): void
     {
-        $path = storage_path('app/public/documents/skillforge-sample-handout.pdf');
+        $path = storage_path('app/public/documents/ocms-sample-handout.pdf');
 
         if (File::exists($path)) {
             return;
@@ -194,7 +195,7 @@ class CourseSeeder extends Seeder
 
         File::ensureDirectoryExists(dirname($path));
 
-        $stream = "BT /F1 22 Tf 72 740 Td (SkillForge Course Handout) Tj ET\n"
+        $stream = "BT /F1 22 Tf 72 740 Td (OCMS Course Handout) Tj ET\n"
             ."BT /F1 12 Tf 72 700 Td (This sample PDF is displayed inside the lesson viewer.) Tj ET\n"
             ."BT /F1 12 Tf 72 680 Td (Learners can read it inline or download a copy.) Tj ET\n"
             ."BT /F1 12 Tf 72 640 Td (1. Review the lesson notes after every video.) Tj ET\n"
@@ -233,7 +234,7 @@ class CourseSeeder extends Seeder
     {
         return [
             [
-                'title' => 'Photography for Beginners', 'category' => 'Photography', 'instructor' => 'alex@skillforge.com', 'price' => 39, 'level' => 'Beginner',
+                'title' => 'Photography for Beginners', 'category' => 'Photography', 'instructor' => 'alex@example.com', 'price' => 39, 'level' => 'Beginner',
                 'image' => 'photo-1452587925148-ce544e77e70d',
                 'short' => 'Learn exposure, composition and light to take confident photos with any camera.',
                 'description' => "Photography for Beginners takes you from auto mode to creative control. You will learn how aperture, shutter speed and ISO work together, how to compose a frame, and how to use natural light.\n\nBy the end you will have a small portfolio of photos you are proud of.",
@@ -246,7 +247,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Explain the exposure triangle and describe how you would adjust it to photograph a moving subject in low light.', 'The exposure triangle is aperture, shutter speed and ISO. For a moving subject in low light, use a wide aperture and a fast enough shutter speed to freeze motion, then raise ISO to compensate while accepting more noise.'],
             ],
             [
-                'title' => 'Public Speaking Confidence', 'category' => 'Personal Development', 'instructor' => 'alex@skillforge.com', 'price' => 29, 'level' => 'Beginner',
+                'title' => 'Public Speaking Confidence', 'category' => 'Personal Development', 'instructor' => 'alex@example.com', 'price' => 29, 'level' => 'Beginner',
                 'image' => 'photo-1475721027785-f74eccf877e2',
                 'short' => 'Overcome nerves and deliver clear, persuasive presentations.',
                 'description' => 'Learn practical techniques to manage anxiety, structure a talk, and connect with any audience.',
@@ -259,7 +260,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Describe three techniques you would use to calm nerves before a presentation and explain why each works.', 'Techniques include controlled breathing, rehearsal, and reframing nervousness as excitement. Breathing slows the heart rate, rehearsal builds familiarity, and reframing reduces threat response.'],
             ],
             [
-                'title' => 'Financial Literacy 101', 'category' => 'Business & Marketing', 'instructor' => 'emily@skillforge.com', 'price' => 34, 'level' => 'Beginner',
+                'title' => 'Financial Literacy 101', 'category' => 'Business & Marketing', 'instructor' => 'emily@example.com', 'price' => 34, 'level' => 'Beginner',
                 'image' => 'photo-1554224155-6726b3ff858f',
                 'short' => 'Budgeting, saving and investing basics for everyday life.',
                 'description' => 'Understand how money works: build a budget, manage debt, and start investing with confidence.',
@@ -272,7 +273,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Explain compound interest and why starting to save early matters. Include a simple example.', 'Compound interest means earning interest on both the principal and previously earned interest. Starting early gives money more time to grow, e.g. 100 at 5% grows to about 163 in 10 years.'],
             ],
             [
-                'title' => 'Mindfulness & Productivity', 'category' => 'Personal Development', 'instructor' => 'alex@skillforge.com', 'price' => 35, 'level' => 'Beginner',
+                'title' => 'Mindfulness & Productivity', 'category' => 'Personal Development', 'instructor' => 'alex@example.com', 'price' => 35, 'level' => 'Beginner',
                 'image' => 'photo-1503676260728-1c00da094a0b',
                 'short' => 'Build focus, reduce stress and get more done with simple daily habits.',
                 'description' => 'Combine mindfulness practice with proven productivity systems to work calmly and effectively.',
@@ -285,7 +286,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Describe how mindfulness can improve productivity and give one practical daily habit you would adopt.', 'Mindfulness trains attention and reduces stress, making it easier to stay on task. A habit such as a five-minute breathing exercise before work helps start the day with focus.'],
             ],
             [
-                'title' => 'Graphic Design with Figma', 'category' => 'Design & Creative', 'instructor' => 'instructor@skillforge.com', 'price' => 54, 'level' => 'Intermediate',
+                'title' => 'Graphic Design with Figma', 'category' => 'Design & Creative', 'instructor' => 'instructor@example.com', 'price' => 54, 'level' => 'Intermediate',
                 'image' => 'photo-1626785774573-4b799315345d',
                 'short' => 'Create professional graphics, components and design systems in Figma.',
                 'description' => 'Master Figma frames, auto layout, components and variants to design faster and more consistently.',
@@ -298,7 +299,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Explain why design systems and components improve consistency, with one real example.', 'Design systems centralise reusable components and styles so changes propagate everywhere. For example, updating a button component updates every instance across screens.'],
             ],
             [
-                'title' => 'SEO & Content Strategy', 'category' => 'Business & Marketing', 'instructor' => 'emily@skillforge.com', 'price' => 64, 'level' => 'Intermediate',
+                'title' => 'SEO & Content Strategy', 'category' => 'Business & Marketing', 'instructor' => 'emily@example.com', 'price' => 64, 'level' => 'Intermediate',
                 'image' => 'photo-1432888622747-4eb9a8efeb07',
                 'short' => 'Rank higher and attract the right visitors with a repeatable content plan.',
                 'description' => 'Learn keyword research, on-page SEO and content planning to grow organic traffic.',
@@ -311,7 +312,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Explain the difference between on-page and off-page SEO and give one example of each.', 'On-page SEO covers elements on the site such as titles and content; off-page SEO covers external signals such as backlinks from reputable websites.'],
             ],
             [
-                'title' => 'Brand Identity Design', 'category' => 'Design & Creative', 'instructor' => 'instructor@skillforge.com', 'price' => 44, 'level' => 'Intermediate', 'status' => 'draft',
+                'title' => 'Brand Identity Design', 'category' => 'Design & Creative', 'instructor' => 'instructor@example.com', 'price' => 44, 'level' => 'Intermediate', 'status' => 'draft',
                 'image' => 'photo-1558655146-9f40138edfeb',
                 'short' => 'Build a memorable brand from logo to voice. (Draft)',
                 'description' => 'A work-in-progress course on brand strategy and identity design.',
@@ -324,7 +325,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['What makes a brand memorable? Discuss with an example.', 'Memorable brands are distinctive, consistent and meaningful, such as brands with a clear logo, colour palette and tone of voice.'],
             ],
             [
-                'title' => 'Digital Marketing Mastery', 'category' => 'Business & Marketing', 'instructor' => 'emily@skillforge.com', 'price' => 59, 'level' => 'Intermediate',
+                'title' => 'Digital Marketing Mastery', 'category' => 'Business & Marketing', 'instructor' => 'emily@example.com', 'price' => 59, 'level' => 'Intermediate',
                 'image' => 'photo-1460925895917-afdab827c52f',
                 'short' => 'Plan, launch and measure campaigns across search, social and email.',
                 'description' => "Digital Marketing Mastery gives you a complete toolkit: audience research, channel strategy, content creation, paid ads and analytics.\n\nYou will build a full campaign plan you can use for a real business.",
@@ -338,7 +339,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Describe how you would plan a digital marketing campaign for a new local coffee shop, including audience, channels and one KPI.', 'Identify the target audience (students and office workers nearby), use Instagram, Google Maps and local email offers, and track a KPI such as foot traffic from coupon redemptions.'],
             ],
             [
-                'title' => 'UI/UX Design Fundamentals', 'category' => 'Design & Creative', 'instructor' => 'instructor@skillforge.com', 'price' => 49, 'level' => 'Beginner',
+                'title' => 'UI/UX Design Fundamentals', 'category' => 'Design & Creative', 'instructor' => 'instructor@example.com', 'price' => 49, 'level' => 'Beginner',
                 'image' => 'photo-1561070791-2526d30994b5',
                 'short' => 'Master user research, wireframing, prototyping and usability testing.',
                 'description' => "Master the core principles of UI/UX design — from user research and wireframing to prototyping and usability testing.\n\nBuild a portfolio-ready project by the end of this course.",
@@ -352,7 +353,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Explain the difference between UI and UX design and describe how user research improves a product.', 'UX is the overall experience and flow; UI is the visual interface. User research uncovers needs and pain points so design decisions are evidence-based rather than assumptions.'],
             ],
             [
-                'title' => 'Full Stack Web Development', 'category' => 'Tech & Programming', 'instructor' => 'john@skillforge.com', 'price' => 79, 'level' => 'Intermediate',
+                'title' => 'Full Stack Web Development', 'category' => 'Tech & Programming', 'instructor' => 'john@example.com', 'price' => 79, 'level' => 'Intermediate',
                 'image' => 'photo-1498050108023-c5249f4df085',
                 'short' => 'Build and deploy modern web applications with HTML, CSS, JavaScript and Laravel.',
                 'description' => "Learn to build modern web applications from scratch using HTML, CSS, JavaScript, and Laravel.\n\nDeploy a full-stack project to production by the end of the course.",
@@ -366,7 +367,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Explain the difference between a stack and a queue, and provide one real-world example of each.', 'A stack is LIFO (last in, first out), like a pile of plates. A queue is FIFO (first in, first out), like a line at a ticket counter.'],
             ],
             [
-                'title' => 'Python Data Science Bootcamp', 'category' => 'Tech & Programming', 'instructor' => 'john@skillforge.com', 'price' => 89, 'level' => 'Intermediate',
+                'title' => 'Python Data Science Bootcamp', 'category' => 'Tech & Programming', 'instructor' => 'john@example.com', 'price' => 89, 'level' => 'Intermediate',
                 'image' => 'photo-1555949963-aa79d882981c',
                 'short' => 'Analyse data and build models with Python, pandas and scikit-learn.',
                 'description' => 'A hands-on introduction to data analysis, visualisation and machine learning using Python.',
@@ -379,7 +380,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Explain the difference between supervised and unsupervised learning and give one example of each.', 'Supervised learning uses labelled data to predict outcomes (e.g. spam detection). Unsupervised learning finds structure in unlabelled data (e.g. customer clustering).'],
             ],
             [
-                'title' => 'Mobile App Development', 'category' => 'Tech & Programming', 'instructor' => 'john@skillforge.com', 'price' => 99, 'level' => 'Advanced',
+                'title' => 'Mobile App Development', 'category' => 'Tech & Programming', 'instructor' => 'john@example.com', 'price' => 99, 'level' => 'Advanced',
                 'image' => 'photo-1512941937669-90a1b58e7e9c',
                 'short' => 'Design, build and ship cross-platform mobile apps.',
                 'description' => 'Go from idea to app-store release: UI patterns, state management, APIs and publishing.',
@@ -392,7 +393,7 @@ class CourseSeeder extends Seeder
                 'essay' => ['Discuss two key differences between designing for mobile and designing for desktop.', 'Mobile screens are smaller and touch-driven, requiring larger tap targets and simpler navigation; desktop allows denser layouts and hover interactions.'],
             ],
             [
-                'title' => 'Study Skills Starter Kit', 'category' => 'Personal Development', 'instructor' => 'alex@skillforge.com', 'price' => 0, 'level' => 'Beginner',
+                'title' => 'Study Skills Starter Kit', 'category' => 'Personal Development', 'instructor' => 'alex@example.com', 'price' => 0, 'level' => 'Beginner',
                 'image' => 'photo-1456513080510-7bf3a84b82f8',
                 'short' => 'A free mini-course on note-taking, memory and exam preparation.',
                 'description' => 'Free introduction to effective study habits: active recall, spaced repetition and note-taking methods.',

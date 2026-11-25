@@ -75,10 +75,16 @@ class Course extends Model
                 return $this->thumbnail;
             }
 
-            return Storage::disk('public')->url($this->thumbnail);
+            // Bundled asset under /public (e.g. /images/courses/photography-for-beginners.jpg).
+            if (str_starts_with($this->thumbnail, '/')) {
+                return asset(ltrim($this->thumbnail, '/'));
+            }
+
+            // Relative to the current request host, so it works on any port (APP_URL may differ from `artisan serve`).
+            return asset('storage/'.ltrim($this->thumbnail, '/'));
         }
 
-        return 'https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&h=500&fit=crop';
+        return asset('images/courses/study-skills-starter-kit.jpg');
     }
 
     /**

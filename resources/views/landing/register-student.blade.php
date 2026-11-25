@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Student Registration — SkillForge')
+@section('title', 'Student Registration — OCMS')
 
 @section('content')
 
@@ -8,7 +8,7 @@
     <div class="auth-shell">
         <div class="auth-panel auth-panel-brand">
             <div class="auth-panel-content">
-                <a href="{{ route('home') }}" class="font-display text-2xl font-bold text-white">SkillForge</a>
+                <a href="{{ route('home') }}" class="font-display text-2xl font-bold text-white">OCMS</a>
                 <h1 class="mt-10 font-display text-3xl sm:text-4xl font-bold text-white leading-tight">Start learning today</h1>
                 <p class="mt-4 text-white/80 leading-relaxed max-w-sm">
                     Create your student account to explore courses, enrol in classes, and access assessments with AI-powered feedback.

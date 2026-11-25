@@ -1,6 +1,6 @@
 @extends('layouts.dashboard', ['role' => 'instructor'])
 
-@section('title', 'Settings — Instructor — SkillForge')
+@section('title', 'Settings — Instructor — OCMS')
 
 @section('content')
 
@@ -57,7 +57,7 @@
             <div class="flex items-center justify-between p-4 rounded-xl border border-gray-100">
                 <div>
                     <p class="text-sm font-semibold text-gray-900">Role</p>
-                    <p class="text-xs text-gray-500 mt-0.5">Your access level on SkillForge</p>
+                    <p class="text-xs text-gray-500 mt-0.5">Your access level on OCMS</p>
                 </div>
                 <span class="dashboard-badge dashboard-badge-purple">{{ $user->role->label() }}</span>
             </div>

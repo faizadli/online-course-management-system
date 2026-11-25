@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', $instructor->name . ' — SkillForge')
+@section('title', $instructor->name . ' — OCMS')
 
 @section('content')
 

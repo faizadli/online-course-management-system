@@ -18,7 +18,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard — SkillForge')</title>
+    <title>@yield('title', 'Dashboard — OCMS')</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
                     <div class="w-8 h-8 bg-brand rounded-lg flex items-center justify-center">
                         <svg class="w-5 h-5 text-gray-800" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/></svg>
                     </div>
-                    <span class="text-xl font-bold">SkillForge</span>
+                    <span class="text-xl font-bold">OCMS</span>
                 </a>
             </div>
 

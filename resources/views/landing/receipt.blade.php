@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Payment Receipt — SkillForge')
+@section('title', 'Payment Receipt — OCMS')
 
 @section('content')
 

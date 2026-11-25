@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'SkillForge — Where Ambition Meets Expertise')
+@section('title', 'OCMS — Where Ambition Meets Expertise')
 
 @section('nav_variant', 'hero')
 

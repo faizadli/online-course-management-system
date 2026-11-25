@@ -1,7 +1,7 @@
 {{-- Testimonials section --}}
 @php
 $testimonials = [
-    ['name' => 'Jessica Miller', 'role' => 'Freelance Graphic Designer', 'text' => 'SkillForge completely transformed my career. The <span class="text-brand font-semibold">UI/UX course</span> gave me the skills I needed to land my first freelance clients within weeks.', 'avatar' => 'photo-1494790108377-be9c29b29330'],
+    ['name' => 'Jessica Miller', 'role' => 'Freelance Graphic Designer', 'text' => 'OCMS completely transformed my career. The <span class="text-brand font-semibold">UI/UX course</span> gave me the skills I needed to land my first freelance clients within weeks.', 'avatar' => 'photo-1494790108377-be9c29b29330'],
     ['name' => 'Ryan Thompson', 'role' => 'Software Engineer', 'text' => 'The quality of instruction is <span class="text-amber-500 font-semibold">outstanding</span>. I went from zero coding knowledge to building full-stack applications in just 6 months.', 'avatar' => 'photo-1507003211169-0a1dd7228f2d'],
     ['name' => 'Maria Santos', 'role' => 'Marketing Manager', 'text' => 'Best investment I\'ve made in my professional development. The <span class="text-purple-500 font-semibold">business courses</span> helped me launch campaigns that actually convert.', 'avatar' => 'photo-1438761681033-6461ffad8d80'],
 ];

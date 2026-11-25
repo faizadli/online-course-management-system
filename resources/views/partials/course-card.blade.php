@@ -21,7 +21,7 @@ $minutes = (int) ($course->contents_sum_duration_minutes ?? 0);
         </h3>
         <div class="mt-3 flex items-center gap-2">
             <span class="w-7 h-7 rounded-full bg-brand-light text-brand-dark text-xs font-bold flex items-center justify-center shrink-0">{{ strtoupper(substr($course->instructor?->name ?? '?', 0, 1)) }}</span>
-            <span class="text-sm text-gray-500 truncate">{{ $course->instructor?->name ?? 'SkillForge' }}</span>
+            <span class="text-sm text-gray-500 truncate">{{ $course->instructor?->name ?? 'OCMS' }}</span>
             <span class="ml-auto text-xs text-gray-400 shrink-0">{{ $course->contents_count ?? 0 }} lessons</span>
         </div>
         <div class="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

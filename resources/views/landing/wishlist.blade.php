@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Wishlist — SkillForge')
+@section('title', 'Wishlist — OCMS')
 
 @section('content')
 
